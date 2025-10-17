@@ -20,5 +20,6 @@ namespace CookMaster
         {
             InitializeComponent();
         }
-    }
+ //hej
+ }
 }
