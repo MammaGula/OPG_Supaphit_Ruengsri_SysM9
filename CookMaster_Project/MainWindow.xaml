@@ -22,7 +22,7 @@
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Background="Black">
             <Button Content="Register" Command ="{Binding OpenRegisterCommand}" Width="122" Margin="5"/>
-            <Button Content="Forget Password" Command="{Binding ForgetPasswordCommand}"  Margin="5" Width="113" />
+            <Button Content="Forget Password" Command="{Binding ForgotPasswordCommand}"  Margin="5" Width="113" />
 
         </StackPanel>
     </StackPanel>

@@ -1,4 +1,4 @@
-﻿using CookMaster_Project.Managers; // Fixes CS0246: Ensure correct namespace is used
+﻿using CookMaster_Project.Managers; 
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+
 namespace CookMaster_Project.Views
 {
     /// <summary>
@@ -20,12 +21,34 @@ namespace CookMaster_Project.Views
     /// </summary>
     public partial class ForgetPasswordWindow : Window
     {
-        private readonly UserManagers userManager; // Add 'readonly' for clarity
+        private readonly UserManagers userManager;
 
         public ForgetPasswordWindow(UserManagers userManager)
         {
             InitializeComponent();
-            this.userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            this.userManager = userManager;
+        }
+
+        private void ResetPasswordButton_Click(object sender, RoutedEventArgs e)
+        {
+            string username = UsernameTextBox.Text;
+            string securityAnswer = SecurityAnswerTextBox.Text;
+            string newPassword = NewPasswordBox.Password;
+
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(securityAnswer) || string.IsNullOrWhiteSpace(newPassword))
+            {
+                MessageBox.Show("Please fill in all fields.");
+                return;
+            }
+
+            bool success = userManager.ChangePassword(username, securityAnswer, newPassword, out string message);
+
+            MessageBox.Show(message);
+
+            if (success)
+            {
+                this.Close();
+            }
         }
     }
 }

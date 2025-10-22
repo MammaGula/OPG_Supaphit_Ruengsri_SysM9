@@ -69,28 +69,26 @@ namespace CookMaster_Project.Managers
             return _users.Any(user => string.Equals(user.Username, username, StringComparison.OrdinalIgnoreCase));
         }
 
-        public bool ChangePassword(string username, string password, string securityAnswer, string newPassword, out string message)
+
+        public bool ChangePassword(string username, string securityAnswer, string newPassword, out string message)
         {
-            // Find the user with the given username and password
-            var user = _users.FirstOrDefault(u => string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase)
-                                                  && u.Password == password);
+            // Find user by username
+            var user = _users.FirstOrDefault(u => string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase));
 
             if (user == null)
             {
-                message = "Invalid username or password.";
+                message = "User not found";
                 return false;
             }
 
-            // Validate the security answer
-            // if (u.SecurityAnswer != securityAnswer)
-
+            // Check security answer
             if (!string.Equals(user.SecurityAnswer, securityAnswer, StringComparison.OrdinalIgnoreCase))
             {
                 message = "Incorrect security answer.";
                 return false;
             }
 
-            // Update the password
+            // Update password
             user.Password = newPassword;
             message = "Password changed successfully.";
             return true;

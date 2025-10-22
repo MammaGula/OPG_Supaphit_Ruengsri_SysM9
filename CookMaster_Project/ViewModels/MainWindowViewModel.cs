@@ -72,6 +72,7 @@ namespace CookMaster_Project.ViewModel
             {
                 Owner = Application.Current.MainWindow
             };
+
             forgetPasswordWindow.ShowDialog();
         }
 
