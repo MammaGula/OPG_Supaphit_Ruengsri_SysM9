@@ -57,9 +57,57 @@ namespace CookMaster_Project.Views
 
         private bool IsPasswordValid(string password)
         {
-            return password.Length >= 8 &&
-                   Regex.IsMatch(password, @"\d") && // At least one digit
-                   Regex.IsMatch(password, @"[^\w\d\s]"); // At least one special character
+            // Check length
+            if (password.Length < 8)
+            {
+                return false;
+            }
+
+            // Check for at least one digit
+            bool containsDigit = false;
+            foreach (char c in password)
+            {
+                if (char.IsDigit(c))
+                {
+                    containsDigit = true;
+                    break;
+                }
+            }
+
+            //Check if contains digit
+            if (!containsDigit)
+            {
+                return false;
+            }
+
+            // Check for at least one special character
+            bool containsSpecialCharacter = false;
+            foreach (char c in password)
+            {
+                // Special character is any character that is not a letter or digit
+                if (!char.IsLetterOrDigit(c) && !char.IsWhiteSpace(c))
+                {
+                    containsSpecialCharacter = true;
+                    break;
+                }
+            }
+            //Check if not contains special character
+            if (!containsSpecialCharacter)
+            {
+                return false;
+            }
+
+            // If all checks passed, the password is valid
+            return true;
         }
+
+
+        //private bool IsPasswordValid(string password)
+        //{
+        //    return password.Length >= 8 &&
+        //           Regex.IsMatch(password, @"\d") && // At least one digit
+        //           Regex.IsMatch(password, @"[^\w\d\s]"); // At least one special character
+        //}
+
     }
 }
