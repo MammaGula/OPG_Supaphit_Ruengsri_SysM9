@@ -10,16 +10,20 @@
     <StackPanel Margin="20" Background="Black">
         <TextBlock Text="CookMaster" HorizontalAlignment="Center" FontSize="40" FontWeight="Bold" Foreground="LightGray"/>
 
+        <!-- Username -->
         <TextBlock Text="Username: " Foreground="White" HorizontalAlignment="Center"/>
         <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" Width="234" />
 
+        <!-- Password -->
         <TextBlock Text="Password: " Foreground="White" HorizontalAlignment="Center"/>
         <PasswordBox x:Name="Pwd" PasswordChanged="Pwd_PasswordChanged" Margin="0,0,0,10" Width="236" />
 
-        <Button Content="Logga in" Command="{Binding LoginCommand}" Width="122" />
+        <!-- Log in -->
+        <Button Content="Log in" Command="{Binding LoginCommand}" Width="122" />
 
         <TextBlock Text="{Binding Error}" Foreground="Red" Margin="0,10,0,0"/>
 
+        <!-- Register Button and ForgetPassword Button -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Background="Black">
             <Button Content="Register" Command ="{Binding OpenRegisterCommand}" Width="122" Margin="5"/>
             <Button Content="Forget Password" Command="{Binding ForgotPasswordCommand}"  Margin="5" Width="113" />

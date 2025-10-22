@@ -13,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-
+// Ensure the namespace matches your project structure
 namespace CookMaster_Project.Views
 {
     /// <summary>
@@ -26,9 +26,12 @@ namespace CookMaster_Project.Views
         public ForgetPasswordWindow(UserManagers userManager)
         {
             InitializeComponent();
+
+            // Store the reference to UserManagers
             this.userManager = userManager;
         }
 
+        // Event handler for the Reset Password button click
         private void ResetPasswordButton_Click(object sender, RoutedEventArgs e)
         {
             string username = UsernameTextBox.Text;
@@ -41,6 +44,7 @@ namespace CookMaster_Project.Views
                 return;
             }
 
+            // Attempt to change the password linked to UserManagers.cs
             bool success = userManager.ChangePassword(username, securityAnswer, newPassword, out string message);
 
             MessageBox.Show(message);

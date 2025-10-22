@@ -25,6 +25,8 @@ namespace CookMaster_Project
             DataContext = new MainWindowViewModel(userManager); // Pass it to the ViewModel constructor
         }
 
+
+        // Update ViewModel's Password property when PasswordBox content changes
         private void Pwd_PasswordChanged(object sender, RoutedEventArgs e)
         {
             if (DataContext is MainWindowViewModel vm)

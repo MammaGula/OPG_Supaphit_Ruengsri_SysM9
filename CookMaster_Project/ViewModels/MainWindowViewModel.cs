@@ -1,6 +1,6 @@
-﻿using CookMaster_Project.Managers;
-using CookMaster_Project.MVVM;
-using CookMaster_Project.Views;
+﻿using CookMaster_Project.Managers;// Import UserManagers
+using CookMaster_Project.MVVM;// Import RelayCommand
+using CookMaster_Project.Views;// Import RegisterWindow
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -10,15 +10,18 @@ namespace CookMaster_Project.ViewModel
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
+        // Fields
         private readonly UserManagers _userManager;
         private string _username = string.Empty;
         private string _password = string.Empty;
         private string _error = string.Empty;
 
+        // Properties
         public string Username { get => _username; set { _username = value; OnPropertyChanged(); } }
         public string Password { get => _password; set { _password = value; OnPropertyChanged(); } }
         public string Error { get => _error; set { _error = value; OnPropertyChanged(); } }
 
+        // Commands that the View can bind to
         public ICommand LoginCommand { get; }
         public ICommand ForgotPasswordCommand { get; }
         public ICommand OpenRegisterCommand { get; }
@@ -33,6 +36,7 @@ namespace CookMaster_Project.ViewModel
             ForgotPasswordCommand = new RelayCommand(execute => ForgotPassword());
         }
 
+       
         private bool CanLogin() =>
             !string.IsNullOrWhiteSpace(Username) && !string.IsNullOrWhiteSpace(Password);
 
@@ -54,6 +58,9 @@ namespace CookMaster_Project.ViewModel
             Application.Current.MainWindow?.Close();
         }
 
+
+
+        // Open the Registration Window
         private void OpenRegisterWindow()
         {
             
@@ -64,7 +71,9 @@ namespace CookMaster_Project.ViewModel
             //Application.Current.MainWindow?.Close();
         }
 
-  
+
+
+        // Open the ForgotPassword Window
         private void ForgotPassword()
         {
             
@@ -76,6 +85,8 @@ namespace CookMaster_Project.ViewModel
             forgetPasswordWindow.ShowDialog();
         }
 
+
+        // Events
         public event System.EventHandler? OnLoginSuccess; 
 
         public event PropertyChangedEventHandler? PropertyChanged; 

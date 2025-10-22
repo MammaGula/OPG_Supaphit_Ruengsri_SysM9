@@ -1,14 +1,15 @@
-﻿using CookMaster_Project.Models;
+﻿using CookMaster_Project.Models; // Import the User model
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
-using CookMaster_Project.MVVM;
+using CookMaster_Project.MVVM; // Import BaseViewModel
 
 
-//ViewModel för att hantera användare
+//ViewModel to manage user-related operations such as login,
+//registration, and password management
 namespace CookMaster_Project.Managers
 {
     public class UserManagers : BaseViewModel
@@ -19,6 +20,7 @@ namespace CookMaster_Project.Managers
 
         public User? LoggedIn { get; private set; }
 
+        // Constructor to initialize with some default users
         public UserManagers()
         {           
             _users.Add(new User { Username = "admin", Password = "password", Country = "Thailand" });
@@ -42,6 +44,7 @@ namespace CookMaster_Project.Managers
             return true;
         }
 
+        // Register a new user
         public bool Register(string username, string password, string country, string securityAnswer, out string message)
         {
             // Check if username already exists
@@ -64,12 +67,14 @@ namespace CookMaster_Project.Managers
         }
 
 
+        // Find user by username
         public bool FindUser(string username)
         {
             return _users.Any(user => string.Equals(user.Username, username, StringComparison.OrdinalIgnoreCase));
         }
 
 
+        // Change password method
         public bool ChangePassword(string username, string securityAnswer, string newPassword, out string message)
         {
             // Find user by username
@@ -99,6 +104,9 @@ namespace CookMaster_Project.Managers
         public User? GetLoggedInUser() => _loggedIn;
         //public List<User> GetAllUsers() => _users;
 
+
+
+        // Logout method
         public void Logout()
         {
             LoggedIn = null;
