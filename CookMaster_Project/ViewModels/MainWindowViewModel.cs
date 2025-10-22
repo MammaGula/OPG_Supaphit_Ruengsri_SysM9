@@ -63,8 +63,7 @@ namespace CookMaster_Project.ViewModel
         // Open the Registration Window
         private void OpenRegisterWindow()
         {
-            
-            var registerWindow = new RegisterWindow();
+            RegisterWindow registerWindow = new(_userManager);
             registerWindow.Show();
 
             //// Stäng huvudfönstret

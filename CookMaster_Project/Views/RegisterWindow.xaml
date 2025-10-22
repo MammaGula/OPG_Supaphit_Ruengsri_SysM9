@@ -37,6 +37,7 @@
         <!-- Country -->
         <Label Content="Country:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
         <ComboBox x:Name="CountryComboBox" Grid.Row="3" Grid.Column="1" Margin="5">
+            <ComboBoxItem Content="Thailand"/>
             <ComboBoxItem Content="Sweden"/>
             <ComboBoxItem Content="Norway"/>
             <ComboBoxItem Content="Denmark"/>
