@@ -1,0 +1,30 @@
+﻿<Window x:Class="CookMaster_Project.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CookMaster_Project"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="300" Width="400">
+
+    <StackPanel Margin="20" Background="Black">
+        <TextBlock Text="CookMaster" HorizontalAlignment="Center" FontSize="40" FontWeight="Bold" Foreground="LightGray"/>
+
+        <TextBlock Text="Username: " Foreground="White" HorizontalAlignment="Center"/>
+        <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" Width="234" />
+
+        <TextBlock Text="Password: " Foreground="White" HorizontalAlignment="Center"/>
+        <PasswordBox x:Name="Pwd" PasswordChanged="Pwd_PasswordChanged" Margin="0,0,0,10" Width="236" />
+
+        <Button Content="Logga in" Command="{Binding LoginCommand}" Width="122" />
+
+        <TextBlock Text="{Binding Error}" Foreground="Red" Margin="0,10,0,0"/>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Background="Black">
+            <Button Content="Register" Command ="{Binding OpenRegisterCommand}" Width="122" Margin="5"/>
+            <Button Content="Forget Password" Command="{Binding ForgetPasswordCommand}"  Margin="5" Width="113" />
+
+        </StackPanel>
+    </StackPanel>
+
+</Window>
