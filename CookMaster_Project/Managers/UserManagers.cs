@@ -8,8 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-//ViewModel to manage user-related operations such as login,
-//registration, and password management
+//ViewModel to manage user-related operations 
 namespace CookMaster_Project.Managers
 {
     public class UserManagers : BaseViewModel
@@ -20,13 +19,13 @@ namespace CookMaster_Project.Managers
 
         public User? LoggedIn { get; private set; }
 
+
         // Constructor to initialize with some default users
         public UserManagers()
         {           
             _users.Add(new User { Username = "admin", Password = "password", Country = "Thailand", SecurityAnswer="1234"  });
             _users.Add(new User { Username = "user", Password = "password", Country = "Sweden", SecurityAnswer = "5678" });
         }
-
        
 
         // Find the user with the given username and password, return null if not found any matching                                     

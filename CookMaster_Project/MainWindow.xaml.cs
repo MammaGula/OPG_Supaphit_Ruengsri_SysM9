@@ -23,6 +23,7 @@ namespace CookMaster_Project
             InitializeComponent();
             UserManagers userManager = new UserManagers(); // Create an instance of UserManagers
             DataContext = new MainWindowViewModel(userManager); // Pass it to the ViewModel constructor
+
         }
 
 

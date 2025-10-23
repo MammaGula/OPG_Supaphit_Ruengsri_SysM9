@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace CookMaster_Project.ViewModel
 {
-    public class MainWindowViewModel : INotifyPropertyChanged
+    public class MainWindowViewModel : BaseViewModel
     {
         // Fields
         private readonly UserManagers _userManager;
@@ -16,10 +16,12 @@ namespace CookMaster_Project.ViewModel
         private string _password = string.Empty;
         private string _error = string.Empty;
 
+
         // Properties
         public string Username { get => _username; set { _username = value; OnPropertyChanged(); } }
         public string Password { get => _password; set { _password = value; OnPropertyChanged(); } }
         public string Error { get => _error; set { _error = value; OnPropertyChanged(); } }
+
 
         // Commands that the View can bind to
         public ICommand LoginCommand { get; }
@@ -28,7 +30,7 @@ namespace CookMaster_Project.ViewModel
    
 
         // Constructor
-        public MainWindowViewModel(UserManagers userManager) 
+        public MainWindowViewModel(UserManagers userManager)
         {
             _userManager = userManager;
             LoginCommand = new RelayCommand(execute => Login(), canExecute => CanLogin());
@@ -56,7 +58,7 @@ namespace CookMaster_Project.ViewModel
 
 
 
-        // Open the ForgotPassword Window
+        // Open the ForgotPassword Window as dialog
         private void ForgotPassword()
         {
             
