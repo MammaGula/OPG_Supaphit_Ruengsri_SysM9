@@ -5,11 +5,10 @@ namespace  CookMaster_Project.MVVM
     public class RelayCommand : ICommand 
     {
         //Fält för att hålla referenser till metoder som definierar vad som ska göras (Execute)
-        private Action<object> execute;
+        private readonly Action<object> execute;
 
         //Kollar om kommandot kan köras
-        private Func<object, bool> canExecute;
-
+        private readonly Func<object, bool>? canExecute;
 
         //Event som signalerar när kommandots möjlighet att köras har ändrats
         public event EventHandler? CanExecuteChanged
@@ -18,25 +17,24 @@ namespace  CookMaster_Project.MVVM
             remove { CommandManager.RequerySuggested -= value; }
         }
 
-
         //Constructor
         //Action is method that return parameter name execute
-        public RelayCommand(Action<object> execute, Func<object, bool> canExecute = null) 
+        public RelayCommand(Action<object> execute, Func<object, bool>? canExecute = null) 
         {
-            this.execute = execute; 
+            this.execute = execute ?? throw new ArgumentNullException(nameof(execute)); 
             this.canExecute = canExecute;
         }
 
         //Bestämmer om kommandot kan köras eller inte
         public bool CanExecute(object? parameter)
         {
-            return canExecute == null || canExecute(parameter);
+            return canExecute == null || canExecute(parameter!);
         }
 
         //Kör den logik som tilldelats via execute metoden
         public void Execute(object? parameter)
         {
-            execute(parameter);
+            execute.Invoke(parameter!);
         }
     }
 }

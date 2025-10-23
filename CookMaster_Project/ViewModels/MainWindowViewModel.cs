@@ -43,31 +43,15 @@ namespace CookMaster_Project.ViewModel
 
         private void Login()
         {
-            
             if (!_userManager.Login(Username, Password, out string msg))
             {
-                
                 MessageBox.Show(msg, "Login failed", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             MessageBox.Show(msg, "Login completed", MessageBoxButton.OK);
-            return;
-
             // Close MainWindow
             Application.Current.MainWindow?.Close();
-        }
-
-
-
-        // Open the Registration Window
-        private void OpenRegisterWindow()
-        {
-            RegisterWindow registerWindow = new(_userManager);
-            registerWindow.Show();
-
-            //// Stäng huvudfönstret
-            //Application.Current.MainWindow?.Close();
         }
 
 
@@ -83,6 +67,23 @@ namespace CookMaster_Project.ViewModel
 
             forgetPasswordWindow.ShowDialog();
         }
+
+
+
+        // Open the Registration Window
+        private void OpenRegisterWindow()
+        {
+            RegisterWindow registerWindow = new RegisterWindow(_userManager);
+            registerWindow.Show();
+
+            //// Stäng huvudfönstret
+            //Application.Current.MainWindow?.Close();
+        }
+
+
+
+
+
 
 
         // Events
