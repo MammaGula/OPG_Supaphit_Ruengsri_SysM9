@@ -100,6 +100,10 @@ namespace CookMaster_Project.ViewModels
             !string.IsNullOrWhiteSpace(ConfirmPassword) &&
             !string.IsNullOrWhiteSpace(SelectedCountry) &&
             Password.Length >= 8 &&
+
+            // Check if password contains at least one digit and one special character
+            Password.Any(char.IsDigit) &&
+            Password.Any(ch => !char.IsLetterOrDigit(ch)) && 
             Password == ConfirmPassword;
 
         private void Register()
