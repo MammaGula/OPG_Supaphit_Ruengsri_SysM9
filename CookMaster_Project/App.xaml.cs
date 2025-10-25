@@ -9,6 +9,7 @@ namespace CookMaster_Project
     /// </summary>
     public partial class App : Application
     {
+        public static object Services { get; internal set; }
     }
 
 }

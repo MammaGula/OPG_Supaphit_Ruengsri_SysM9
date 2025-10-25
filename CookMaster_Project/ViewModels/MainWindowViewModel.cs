@@ -27,7 +27,7 @@ namespace CookMaster_Project.ViewModel
         public ICommand LoginCommand { get; }
         public ICommand ForgotPasswordCommand { get; }
         public ICommand OpenRegisterCommand { get; }
-   
+
 
         // Constructor
         public MainWindowViewModel(UserManagers userManager)
@@ -38,9 +38,10 @@ namespace CookMaster_Project.ViewModel
             ForgotPasswordCommand = new RelayCommand(execute => ForgotPassword());
         }
 
-       
+
         private bool CanLogin() =>
             !string.IsNullOrWhiteSpace(Username) && !string.IsNullOrWhiteSpace(Password);
+
 
 
         private void Login()
@@ -52,16 +53,50 @@ namespace CookMaster_Project.ViewModel
             }
 
             MessageBox.Show(msg, "Login completed", MessageBoxButton.OK);
-            // Close MainWindow
-            Application.Current.MainWindow?.Close();
+
+            // Create and show the RecipeListWindow
+            RecipeListWindow recipeListWindow = new RecipeListWindow();
+            recipeListWindow.Show();
+
+            // Close the current MainWindow
+            Application.Current.Windows
+                .OfType<Window>()
+                .FirstOrDefault(w => w is MainWindow)?
+                .Close();
         }
+
+        ////private void Login()
+        ////{
+        ////    if (!_userManager.Login(Username, Password, out string msg))
+        ////    {
+        ////        MessageBox.Show(msg, "Login failed", MessageBoxButton.OK, MessageBoxImage.Warning);
+        ////        return;
+        ////    }
+
+        ////    MessageBox.Show(msg, "Login completed", MessageBoxButton.OK);
+
+        ////    // Open RecipeListWindow after successful login
+        ////    RecipeListWindow recipeListWindow = new RecipeListWindow
+        ////    {
+        ////        Owner = Application.Current.MainWindow
+        ////    };
+        ////    recipeListWindow.Show();
+
+        ////    // Close MainWindow
+        ////    Application.Current.MainWindow?.Close();
+        ////}
+
+
 
 
 
         // Open the ForgotPassword Window as dialog
+        //Create instance of ForgetPasswordWindow by passing _userManager to constructor
+        //Make the ForgetPasswordWindow window the main window by using Application.Current.MainWindow
+        //so that new windows that are opened are in the context of the main window.
         private void ForgotPassword()
         {
-            
+
             CookMaster_Project.Views.ForgetPasswordWindow forgetPasswordWindow = new CookMaster_Project.Views.ForgetPasswordWindow(_userManager)
             {
                 Owner = Application.Current.MainWindow
@@ -73,26 +108,19 @@ namespace CookMaster_Project.ViewModel
 
 
         // Open the Registration Window
+        //Passing _userManager allows the registration window to access user management functions,
+        //such as adding new users or verifying user information.
         private void OpenRegisterWindow()
         {
             RegisterWindow registerWindow = new RegisterWindow(_userManager);
             registerWindow.Show();
 
-            //// Stäng huvudfönstret
-            //Application.Current.MainWindow?.Close();
         }
 
 
-
-
-
-
-
         // Events
-        public event System.EventHandler? OnLoginSuccess; 
-
-        public event PropertyChangedEventHandler? PropertyChanged; 
-        private void OnPropertyChanged([CallerMemberName] string? name = null)
+        public new event PropertyChangedEventHandler? PropertyChanged;
+        private new void OnPropertyChanged([CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }

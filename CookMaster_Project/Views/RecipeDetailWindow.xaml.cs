@@ -11,20 +11,17 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using CookMaster_Project.ViewModel;
-using CookMaster_Project.ViewModels;
 
 namespace CookMaster_Project.Views
 {
     /// <summary>
-    /// Interaction logic for RecipeListWindow.xaml
+    /// Interaction logic for RecipeDetailWindow.xaml
     /// </summary>
-    public partial class RecipeListWindow : Window
+    public partial class RecipeDetailWindow : Window
     {
-        public RecipeListWindow()
+        public RecipeDetailWindow(Models.Recipe selectedRecipe)
         {
             InitializeComponent();
-            DataContext = new RecipeListWindowViewModel();
         }
     }
 }

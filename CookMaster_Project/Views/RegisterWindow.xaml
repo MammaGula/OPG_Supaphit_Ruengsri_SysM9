@@ -35,7 +35,7 @@
         <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"/>
 
         <StackPanel Orientation="Horizontal" Grid.Row="5" HorizontalAlignment="Right" Margin="0,0,5,36" Grid.Column="1" Width="117">
-            <Button Content="Register" Command="{Binding RegisterCommand}" Margin="5" Width="50"/>
+            <Button Content="Register" Command="{Binding RegisterCommand}" Margin="5" Width="50" IsEnabled="{Binding RegisterCommand.CanExecute}"/>
             <Button Content="Cancel" Command="{Binding CancelCommand}" Margin="5" Width="47"/>
         </StackPanel>
     </Grid>

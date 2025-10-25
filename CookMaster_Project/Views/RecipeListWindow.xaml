@@ -19,21 +19,21 @@
         </StackPanel>
 
         <!-- Recipe List -->
-        <ListView Grid.Row="1"  Margin="10">
+        <ListView Grid.Row="1" ItemsSource="{Binding Recipes}" SelectedItem="{Binding SelectedRecipe}" Margin="10">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Title"  Width="200"/>
-                    <GridViewColumn Header="Date"  Width="150"/>
+                    <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}" Width="200"/>
+                    <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}" Width="150"/>
                 </GridView>
             </ListView.View>
         </ListView>
 
         <!-- Buttons -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10">
-            <Button Content="Add Recipe"  Margin="5,0"/>
-            <Button Content="Details"  Margin="5,0"/>
-            <Button Content="Remove"  Margin="5,0"/>
-            <Button Content="Info"  Margin="5,0"/>
+            <Button Content="Add Recipe" Command="{Binding AddRecipeCommand}" Margin="5,0"/>
+            <Button Content="Details" Command="{Binding ViewDetailsCommand}" Margin="5,0"/>
+            <Button Content="Remove" Command="{Binding RemoveRecipeCommand}" Margin="5,0"/>
+            <Button Content="Info" Command="{Binding ShowInfoCommand}" Margin="5,0"/>
         </StackPanel>
     </Grid>
 </Window>

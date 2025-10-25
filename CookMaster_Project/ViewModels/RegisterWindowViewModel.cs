@@ -103,7 +103,7 @@ namespace CookMaster_Project.ViewModels
 
             // Check if password contains at least one digit and one special character
             Password.Any(char.IsDigit) &&
-            Password.Any(ch => !char.IsLetterOrDigit(ch)) && 
+            Password.Any(ch => !char.IsLetterOrDigit(ch)) &&
             Password == ConfirmPassword;
 
         private void Register()
@@ -120,7 +120,7 @@ namespace CookMaster_Project.ViewModels
                 MessageBox.Show("User registered successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 var registerWindow = Application.Current.Windows.OfType<RegisterWindow>().FirstOrDefault();
 
-                registerWindow?.Close(); 
+                registerWindow?.Close();
             }
             else
             {
@@ -131,7 +131,7 @@ namespace CookMaster_Project.ViewModels
 
         private void Cancel()
         {
-            
+
             var registerWindow = Application.Current.Windows
                 .OfType<RegisterWindow>() // Find only RegisterWindow
                 .FirstOrDefault();
