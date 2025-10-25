@@ -18,21 +18,26 @@ namespace CookMaster_Project.Managers
         private User? _loggedIn;
 
         public User? LoggedIn { get; private set; }
+        public IEnumerable<object> Recipes { get; internal set; }
+        //an interface used for iterating through data such as lists or arrays.
+        //Recipes used only for reading recipe information, Prevents users of this property from being able to directly add or delete items in the list.
+        //save memory and improve performance in case of large data size.
+
 
 
         // Constructor to initialize with some default users
         public UserManagers()
-        {           
-            _users.Add(new User { Username = "admin", Password = "password", Country = "Thailand", SecurityAnswer="1234"  });
+        {
+            _users.Add(new User { Username = "admin", Password = "password", Country = "Thailand", SecurityAnswer = "1234" });
             _users.Add(new User { Username = "user", Password = "password", Country = "Sweden", SecurityAnswer = "5678" });
         }
-       
+
 
         // Find the user with the given username and password, return null if not found any matching                                     
         public bool Login(string username, string password, out string message)
         {
             // Find the user in the _users list.
-            User? user = _users.FirstOrDefault(u => !string.Equals(u.Username == username, StringComparison.OrdinalIgnoreCase) && u.Password == password);
+            User? user = _users.FirstOrDefault(u => string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase) && u.Password == password);
             if (user == null)
             {
                 message = "Invalid username or password";
@@ -40,6 +45,7 @@ namespace CookMaster_Project.Managers
             }
 
             LoggedIn = user;
+            _loggedIn = user;
             message = "Log in successful!";
             return true;
         }
@@ -52,7 +58,7 @@ namespace CookMaster_Project.Managers
             if (_users.Any(u => string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase)))
             {
                 message = "Username is not available";
-                return false; 
+                return false;
             }
 
             User newUser = new User
@@ -103,7 +109,7 @@ namespace CookMaster_Project.Managers
 
         // Method to get the currently logged-in user
         public User? GetLoggedInUser() => _loggedIn;
-        //public List<User> GetAllUsers() => _users;
+        //public List<User> GetAllUsers;
 
 
 
@@ -115,5 +121,3 @@ namespace CookMaster_Project.Managers
 
     }
 }
-
-

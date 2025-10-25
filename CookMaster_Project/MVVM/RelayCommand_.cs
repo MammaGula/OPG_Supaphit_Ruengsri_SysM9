@@ -1,8 +1,8 @@
-﻿using System.Windows.Input; 
+﻿using System.Windows.Input;
 
-namespace  CookMaster_Project.MVVM
+namespace CookMaster_Project.MVVM
 {
-    public class RelayCommand : ICommand 
+    public class RelayCommand : ICommand
     {
         //Fält för att hålla referenser till metoder som definierar vad som ska göras (Execute)
         private readonly Action<object> execute;
@@ -19,9 +19,9 @@ namespace  CookMaster_Project.MVVM
 
         //Constructor
         //Action is method that return parameter name execute
-        public RelayCommand(Action<object> execute, Func<object, bool>? canExecute = null) 
+        public RelayCommand(Action<object> execute, Func<object, bool>? canExecute = null)
         {
-            this.execute = execute ?? throw new ArgumentNullException(nameof(execute)); 
+            this.execute = execute ?? throw new ArgumentNullException(nameof(execute));
             this.canExecute = canExecute;
         }
 
