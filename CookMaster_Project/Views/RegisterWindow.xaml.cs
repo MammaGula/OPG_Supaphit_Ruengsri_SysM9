@@ -22,30 +22,54 @@ namespace CookMaster_Project.Views
     public partial class RegisterWindow : Window
     {
 
-        //Constructor that accepts UserManagers instance
+        private readonly RegisterWindowViewModel _vm;
+
+        // In case of opening a window without sending UserManagers (will be pulled from App.Resources)
+        public RegisterWindow()
+        {
+            InitializeComponent();
+            var userManager = (UserManagers)Application.Current.Resources["UserManagers"];
+            _vm = new RegisterWindowViewModel(userManager);
+            DataContext = _vm;
+
+        }
+
+        // In case of opening a window by passing in UserManagers (supports your existing code).
         public RegisterWindow(UserManagers userManager)
         {
             InitializeComponent();
-            DataContext = new RegisterWindowViewModel(userManager); 
+            _vm = new RegisterWindowViewModel(userManager);
+            DataContext = _vm;
         }
 
 
-        //update the password in the PasswordBox (View)to the Password prop. in ViewModel
+        // Pattern matching: Check both sender and DataContext first,
+        // if sender is not PasswordBox the condition is not met and no exception is thrown.
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-           
-            if (DataContext is RegisterWindowViewModel viewModel)
+            if (sender is PasswordBox pb && DataContext is RegisterWindowViewModel vm)
             {
-                viewModel.Password = ((PasswordBox)sender).Password;
+                vm.Password = pb.Password;
             }
         }
+
+        ////update the password in the PasswordBox (View)to the Password prop. in ViewModel
+        //private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        //{
+
+        //    if (DataContext is RegisterWindowViewModel viewModel)
+        //    {
+        //        viewModel.Password = ((PasswordBox)sender).Password;
+        //    }
+        //}
+
 
 
         private void ConfirmPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            if (DataContext is RegisterWindowViewModel viewModel)
+            if (sender is PasswordBox pb && DataContext is RegisterWindowViewModel vm)
             {
-                viewModel.ConfirmPassword = ((PasswordBox)sender).Password;
+                vm.ConfirmPassword = pb.Password;
             }
         }
     }

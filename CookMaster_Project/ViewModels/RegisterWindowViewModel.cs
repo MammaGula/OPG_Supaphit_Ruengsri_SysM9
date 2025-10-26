@@ -1,4 +1,4 @@
-using CookMaster_Project.Managers;
+﻿using CookMaster_Project.Managers;
 using CookMaster_Project.MVVM;
 using CookMaster_Project.Views;
 using System.Collections.Generic;
@@ -134,19 +134,30 @@ namespace CookMaster_Project.ViewModels
 
         private void Register()
         {
+            // เคลียร์ข้อความผิดพลาดเก่า (ถ้ามี)
+            ErrorMessage = string.Empty;
+
+            var username = Username?.Trim() ?? string.Empty;
+
             // Check if username is already taken
-            if (_userManager.FindUser(Username))
+            if (_userManager.FindUser(username))
             {
                 ErrorMessage = "Username is already taken.";
                 return;
             }
+
             // Register new user
-            if (_userManager.Register(Username, Password, SelectedCountry, SecurityQuestion, SecurityAnswer, out string message))
+            if (_userManager.Register(username, Password, SelectedCountry, SecurityQuestion, SecurityAnswer, out string message))
             {
                 MessageBox.Show("User registered successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                var registerWindow = Application.Current.Windows.OfType<RegisterWindow>().FirstOrDefault();
 
+                // Close RegisterWindow
+                var registerWindow = Application.Current.Windows.OfType<RegisterWindow>().FirstOrDefault();
                 registerWindow?.Close();
+
+                // Go Back to MainWindow (Reopen if Main is closed when opening Register)
+                var main = new MainWindow();
+                main.Show();
             }
             else
             {
@@ -157,12 +168,16 @@ namespace CookMaster_Project.ViewModels
 
         private void Cancel()
         {
-
+            // Close RegisterWindow
             var registerWindow = Application.Current.Windows
                 .OfType<RegisterWindow>() // Find only RegisterWindow
                 .FirstOrDefault();
 
             registerWindow?.Close(); // Close the RegisterWindow if found
+
+            // Reopen MainWindow to prevent window from freezing (UX and spec compliant)
+            var main = new MainWindow();
+            main.Show();
         }
     }
 }

@@ -2,6 +2,7 @@
 using CookMaster_Project.MVVM; // Import BaseViewModel
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -17,18 +18,27 @@ namespace CookMaster_Project.Managers
         private User? _loggedIn;
 
         public User? LoggedIn { get; private set; }
-        public IEnumerable<object> Recipes { get; internal set; } = new List<object>();
-        //an interface used for iterating through data such as lists or arrays.
-        //Recipes used only for reading recipe information, Prevents users of this property from being able to directly add or delete items in the list.
-        //save memory and improve performance in case of large data size.
+
+        // Use as a central data source (real CRUD)
+        public ObservableCollection<Recipe> Recipes { get; } = new();
+
+        //public IEnumerable<object> Recipes { get; internal set; } = new List<object>();
+        ////an interface used for iterating through data such as lists or arrays.
+        ////Recipes used only for reading recipe information, Prevents users of this property from being able to directly add or delete items in the list.
+        ////save memory and improve performance in case of large data size.
 
 
 
         // Constructor to initialize with some default users
         public UserManagers()
         {
-            _users.Add(new User { Username = "admin", Password = "password", Country = "Thailand", SecurityQuestion = "What is the Admin PIN?", SecurityAnswer = "1234" });
-            _users.Add(new User { Username = "user", Password = "password", Country = "Sweden", SecurityQuestion = "What is your lucky number", SecurityAnswer = "5678" });
+            _users.Add(new User { Username = "admin", Password = "password", Country = "Thailand", SecurityQuestion = "What is the Admin PIN?", SecurityAnswer = "1234", IsAdmin = true });
+            _users.Add(new User { Username = "user", Password = "password", Country = "Sweden", SecurityQuestion = "What is your lucky number", SecurityAnswer = "5678", IsAdmin = false });
+
+
+            // Initialize with some default recipes
+            Recipes.Add(new Recipe { Title = "Pancake", Description = "Sweet pancake", Ingredients = "Flour, Egg, Milk", Instructions = "Mix & fry", Type = "Dessert", TimeMinutes = 20, CreatedBy = "admin" });
+            Recipes.Add(new Recipe { Title = "fried rice", Description = "Easy and helthy meal", Ingredients = "Rice, Garlic, Sugar, Eggs, Soya suace, vegetables, meat", Instructions = "Chop & Fry", Type = "Appetizer", TimeMinutes = 10, CreatedBy = "user" });
         }
 
 
@@ -61,18 +71,20 @@ namespace CookMaster_Project.Managers
                 return false;
             }
 
-            User newUser = new User
+            _users.Add(new User
             {
                 Username = username,
                 Password = password,
                 Country = country,
                 SecurityQuestion = securityQuestion,
                 SecurityAnswer = securityAnswer,
-            };
-            _users.Add(newUser);
+                IsAdmin = false
+            });
+
             message = "Registered";
             return true;
         }
+
 
 
         // Check if any user in List users
@@ -80,6 +92,7 @@ namespace CookMaster_Project.Managers
         {
             return _users.Any(user => string.Equals(user.Username, username, StringComparison.OrdinalIgnoreCase));
         }
+
 
 
         // Change password method
@@ -108,6 +121,7 @@ namespace CookMaster_Project.Managers
         }
 
 
+
         // Get security questions by Username
         public string? GetSecurityQuestion(string username)
         {
@@ -117,7 +131,6 @@ namespace CookMaster_Project.Managers
 
 
 
-        // Method to get the currently logged-in user
         public User? GetLoggedInUser() => _loggedIn;
         //public List<User> GetAllUsers;
 
@@ -126,7 +139,15 @@ namespace CookMaster_Project.Managers
         // Logout method
         public void Logout()
         {
-            LoggedIn = null;
+            LoggedIn = null;// Bug fix: Clear real state
+        }
+
+
+        // CRUD for Recipe
+        public void AddRecipe(Recipe recipe) => Recipes.Add(recipe);
+        public void RemoveRecipe(Recipe recipe)
+        {
+            if (Recipes.Contains(recipe)) Recipes.Remove(recipe);
         }
 
     }
