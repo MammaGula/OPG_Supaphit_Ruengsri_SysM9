@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using CookMaster_Project.Managers;
+using CookMaster_Project.Models;
 
 namespace CookMaster_Project.Views
 {
@@ -19,11 +10,19 @@ namespace CookMaster_Project.Views
     /// </summary>
     public partial class RecipeDetailWindow : Window
     {
-        public RecipeDetailWindow(Models.Recipe selectedRecipe)
+        private readonly IRecipeService _recipeService;
+        private readonly Recipe _boundRecipe;
+
+        // Constructor with dependency injection
+        public RecipeDetailWindow(Recipe selectedRecipe, IRecipeService recipeService)
         {
             InitializeComponent();
-            // Set DataContext to the selected recipe so XAML can bind to its properties
-            DataContext = selectedRecipe ?? throw new System.ArgumentNullException(nameof(selectedRecipe));
+            _recipeService = recipeService;
+            _boundRecipe = selectedRecipe ?? throw new System.ArgumentNullException(nameof(selectedRecipe));
+
+            // Bind to DataContext to allow XAML access to Recipe properties.
+            DataContext = _boundRecipe;
         }
     }
 }
+

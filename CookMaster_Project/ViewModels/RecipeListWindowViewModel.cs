@@ -13,7 +13,9 @@ namespace CookMaster_Project.ViewModel
 {
     public class RecipeListWindowViewModel : BaseViewModel
     {
-        private readonly UserManagers _userManager;
+        private readonly UserManagers? _userManager;
+        private readonly IRecipeService _recipeService = null!; // Add null-forgiving operator
+
         private Recipe? _selectedRecipe;
         private string _searchQuery = string.Empty;
         private string _selectedFilter = "All";
@@ -40,8 +42,10 @@ namespace CookMaster_Project.ViewModel
             set { _selectedFilter = value; OnPropertyChanged(); ApplyFilters(); }
         }
 
+
+
         //Check if the value returned by ?.Username is null.If null, return "Guest". Otherwise,return the value of Username.
-        public string LoggedInUsername => _userManager.GetLoggedInUser()?.Username ?? "Guest";
+        public string LoggedInUsername => _userManager?.GetLoggedInUser()?.Username ?? "Guest";
 
         public ICommand AddRecipeCommand { get; }
         public ICommand RemoveRecipeCommand { get; }
@@ -51,10 +55,13 @@ namespace CookMaster_Project.ViewModel
         public ICommand ShowInfoCommand { get; }
 
 
-        public RecipeListWindowViewModel(UserManagers userManager)
+
+
+        // In case of injecting external dependencies.
+        public RecipeListWindowViewModel(UserManagers userManager, IRecipeService? recipeService = null)
         {
             _userManager = userManager;
-
+            _recipeService = recipeService ?? new RecipeManager(_userManager);
 
             AddRecipeCommand = new RelayCommand(execute => OpenAddRecipeWindow());
             RemoveRecipeCommand = new RelayCommand(execute => RemoveRecipe(), canExecute => SelectedRecipe != null);
@@ -66,12 +73,14 @@ namespace CookMaster_Project.ViewModel
             LoadRecipes();
         }
 
+
         // In case of being created from XAML/design: pulling UserManagers from App.Resources.
         public RecipeListWindowViewModel()
         {
             if (Application.Current?.Resources["UserManagers"] is UserManagers um)
             {
                 _userManager = um;
+                _recipeService = new RecipeManager(_userManager);
 
                 AddRecipeCommand = new RelayCommand(execute => OpenAddRecipeWindow());
                 RemoveRecipeCommand = new RelayCommand(execute => RemoveRecipe(), canExecute => SelectedRecipe != null);
@@ -84,7 +93,8 @@ namespace CookMaster_Project.ViewModel
             }
             else
             {
-                // Prevent Null in case of design/run without resources (no data will be loaded)
+                // fallback design-time
+                // In case of being created from XAML/design: pulling UserManagers from App.Resources.
                 AddRecipeCommand = new RelayCommand(execute => { });
                 RemoveRecipeCommand = new RelayCommand(execute => { }, canExecute => false);
                 ViewDetailsCommand = new RelayCommand(execute => { }, canExecute => false);
@@ -94,16 +104,16 @@ namespace CookMaster_Project.ViewModel
             }
         }
 
+
+
+        // The LoadRecipes method loads recipes from a data source (in this case, UserManagers)
+        // and adds them to the Recipes collection, then calls ApplyFilters to filter the data before displaying it in the UI.
         private void LoadRecipes()
         {
-            // The LoadRecipes method loads recipes from a data source (in this case, UserManagers)
-            // and adds them to the Recipes collection, then calls ApplyFilters to filter the data before displaying it in the UI.
-
-
             Recipes.Clear();
 
-            var current = _userManager.GetLoggedInUser();
-            var source = _userManager.Recipes.AsEnumerable();
+            var current = _userManager?.GetLoggedInUser();
+            var source = _recipeService?.Recipes?.AsEnumerable() ?? Enumerable.Empty<Recipe>();
 
             // Admin sees all; Regular users only see their own.
             if (current != null && !current.IsAdmin)
@@ -120,7 +130,6 @@ namespace CookMaster_Project.ViewModel
         }
 
 
-
         //The ApplyFilters method is used to filter recipes in Recipes by type (SelectedFilter)
         //and search term (SearchQuery), and then append the filtered results to FilteredRecipes for display in the UI.
         //Use LINQ(via Where) to filter data in the Recipes collection based on specified conditions:
@@ -129,7 +138,8 @@ namespace CookMaster_Project.ViewModel
         {
             FilteredRecipes.Clear();
 
-            var filtered = Recipes.Where(r => (SelectedFilter == "All" || r.Type == SelectedFilter) &&
+            var filtered = Recipes.Where(r =>
+                (SelectedFilter == "All" || r.Type == SelectedFilter) &&
                 (string.IsNullOrWhiteSpace(SearchQuery) || r.Title.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)));
 
             foreach (var recipe in filtered)
@@ -145,13 +155,14 @@ namespace CookMaster_Project.ViewModel
         //After closing the AddRecipeWindow window, the LoadRecipes method is called to load a new list of recipes and refresh the UI.
         private void OpenAddRecipeWindow()
         {
-            AddRecipeWindow addRecipeWindow = new AddRecipeWindow()
+            var addRecipeWindow = new AddRecipeWindow()
             {
                 Owner = Application.Current.MainWindow
             };
             addRecipeWindow.ShowDialog();
             LoadRecipes();
         }
+
 
 
         //The RemoveRecipe method removes the user-selected recipe (SelectedRecipe)
@@ -165,7 +176,7 @@ namespace CookMaster_Project.ViewModel
             }
 
             // Delete through the central data source and reload to make the UI/FILTER consistent.
-            _userManager.RemoveRecipe(SelectedRecipe);
+            _recipeService.RemoveRecipe(SelectedRecipe);
             LoadRecipes();
         }
 
@@ -180,7 +191,7 @@ namespace CookMaster_Project.ViewModel
                 return;
             }
 
-            RecipeDetailWindow recipeDetailWindow = new RecipeDetailWindow(SelectedRecipe)
+            var recipeDetailWindow = new RecipeDetailWindow(SelectedRecipe, _recipeService)
             {
                 Owner = Application.Current.MainWindow
             };
@@ -191,7 +202,13 @@ namespace CookMaster_Project.ViewModel
         //The OpenUserDetailsWindow method opens a new window (UserDetailsWindow)
         private void OpenUserDetailsWindow()
         {
-            UserDetailsWindow userDetailsWindow = new UserDetailsWindow(_userManager)
+            if (_userManager == null)
+            {
+                MessageBox.Show("User manager is not available.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            var userDetailsWindow = new UserDetailsWindow(_userManager)
             {
                 Owner = Application.Current.MainWindow
             };
@@ -202,10 +219,14 @@ namespace CookMaster_Project.ViewModel
         //The SignOut method logs out the current user using the UserManagers instance
         private void SignOut()
         {
-            _userManager.Logout();
+            _userManager?.Logout();
+
+            // Back to MainWindow
+            var main = new MainWindow();
+            main.Show();
 
             //Close the window where DataContext == this (supports if MainWindow is not the current page)
-            Application.Current.Windows
+            Application.Current?.Windows
                 ?.OfType<Window>()
                 ?.FirstOrDefault(w => w.DataContext == this)
                 ?.Close();
@@ -215,7 +236,11 @@ namespace CookMaster_Project.ViewModel
         //Displays an informational message box about the CookMaster application.
         private void ShowInfo()
         {
-            MessageBox.Show("Welcome to CookMaster! Your ultimate kitchen companion for whipping up delicious recipes. Whether you're a master chef or a curious foodie, CookMaster is here to spice up your cooking journey. Let's turn your kitchen into a world of flavors!", "About CookMaster", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(
+                "Welcome to CookMaster! Your ultimate kitchen companion for whipping up delicious recipes. Whether you're a master chef or a curious foodie, CookMaster is here to spice up your cooking journey. Let's turn your kitchen into a world of flavors!",
+                "About CookMaster",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
     }
 }
