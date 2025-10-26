@@ -12,11 +12,13 @@ namespace CookMaster_Project.ViewModels
     {
         // Fields
         private readonly UserManagers _userManager;
-        private string _username;
-        private string _password;
-        private string _confirmPassword;
-        private string _selectedCountry;
-        private string _errorMessage;
+        private string _username = string.Empty;
+        private string _password = string.Empty;
+        private string _confirmPassword = string.Empty;
+        private string _selectedCountry = string.Empty;
+        private string _securityQuestion = string.Empty;
+        private string _securityAnswer = string.Empty;
+        private string _errorMessage = string.Empty;
 
         // Properties
         public string Username
@@ -64,6 +66,28 @@ namespace CookMaster_Project.ViewModels
             }
         }
 
+        public string SecurityQuestion
+        {
+            get => _securityQuestion;
+            set
+            {
+                _securityQuestion = value;
+                OnPropertyChanged();
+                CommandManager.InvalidateRequerySuggested();
+            }
+        }
+
+        public string SecurityAnswer
+        {
+            get => _securityAnswer;
+            set
+            {
+                _securityAnswer = value;
+                OnPropertyChanged();
+                CommandManager.InvalidateRequerySuggested();
+            }
+        }
+
         public string ErrorMessage
         {
             get => _errorMessage;
@@ -99,6 +123,8 @@ namespace CookMaster_Project.ViewModels
             !string.IsNullOrWhiteSpace(Password) &&
             !string.IsNullOrWhiteSpace(ConfirmPassword) &&
             !string.IsNullOrWhiteSpace(SelectedCountry) &&
+            !string.IsNullOrWhiteSpace(SecurityQuestion) &&
+            !string.IsNullOrWhiteSpace(SecurityAnswer) &&
             Password.Length >= 8 &&
 
             // Check if password contains at least one digit and one special character
@@ -115,7 +141,7 @@ namespace CookMaster_Project.ViewModels
                 return;
             }
             // Register new user
-            if (_userManager.Register(Username, Password, SelectedCountry, "DefaultAnswer", out string message))
+            if (_userManager.Register(Username, Password, SelectedCountry, SecurityQuestion, SecurityAnswer, out string message))
             {
                 MessageBox.Show("User registered successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 var registerWindow = Application.Current.Windows.OfType<RegisterWindow>().FirstOrDefault();

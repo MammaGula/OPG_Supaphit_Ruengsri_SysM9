@@ -13,12 +13,11 @@ namespace CookMaster_Project.Managers
 {
     public class UserManagers : BaseViewModel
     {
-
         private List<User> _users = new();
         private User? _loggedIn;
 
         public User? LoggedIn { get; private set; }
-        public IEnumerable<object> Recipes { get; internal set; }
+        public IEnumerable<object> Recipes { get; internal set; } = new List<object>();
         //an interface used for iterating through data such as lists or arrays.
         //Recipes used only for reading recipe information, Prevents users of this property from being able to directly add or delete items in the list.
         //save memory and improve performance in case of large data size.
@@ -28,8 +27,8 @@ namespace CookMaster_Project.Managers
         // Constructor to initialize with some default users
         public UserManagers()
         {
-            _users.Add(new User { Username = "admin", Password = "password", Country = "Thailand", SecurityAnswer = "1234" });
-            _users.Add(new User { Username = "user", Password = "password", Country = "Sweden", SecurityAnswer = "5678" });
+            _users.Add(new User { Username = "admin", Password = "password", Country = "Thailand", SecurityQuestion = "What is the Admin PIN?", SecurityAnswer = "1234" });
+            _users.Add(new User { Username = "user", Password = "password", Country = "Sweden", SecurityQuestion = "What is your lucky number", SecurityAnswer = "5678" });
         }
 
 
@@ -50,8 +49,9 @@ namespace CookMaster_Project.Managers
             return true;
         }
 
+
         // Register a new user
-        public bool Register(string username, string password, string country, string securityAnswer, out string message)
+        public bool Register(string username, string password, string country, string securityQuestion, string securityAnswer, out string message)
         {
             // Check if username already exists
             // Any: Check if there are users in the _users list, ​​if there is at least one user , return true; otherwise, return false.
@@ -66,6 +66,7 @@ namespace CookMaster_Project.Managers
                 Username = username,
                 Password = password,
                 Country = country,
+                SecurityQuestion = securityQuestion,
                 SecurityAnswer = securityAnswer,
             };
             _users.Add(newUser);
@@ -105,6 +106,15 @@ namespace CookMaster_Project.Managers
             message = "Password changed successfully.";
             return true;
         }
+
+
+        // Get security questions by Username
+        public string? GetSecurityQuestion(string username)
+        {
+            var user = _users.FirstOrDefault(u => string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase));
+            return user?.SecurityQuestion;
+        }
+
 
 
         // Method to get the currently logged-in user
