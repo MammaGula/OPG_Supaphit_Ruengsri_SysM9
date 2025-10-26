@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Recipe List" Height="450" Width="800">
+        Title="Recipe List" Height="350" Width="600">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -31,9 +31,9 @@
         <!-- Buttons -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10">
             <Button Content="Add Recipe" Command="{Binding AddRecipeCommand}" Margin="5,0"/>
-            <Button Content="Details" Command="{Binding ViewDetailsCommand}" Margin="5,0"/>
-            <Button Content="Remove" Command="{Binding RemoveRecipeCommand}" Margin="5,0"/>
-            <Button Content="Info" Command="{Binding ShowInfoCommand}" Margin="5,0"/>
+            <Button Content="Remove Recipe" Command="{Binding RemoveRecipeCommand}" Margin="5,0"/>
+            <Button Content="Recipe Details" Command="{Binding ViewDetailsCommand}" Margin="5,0"/>
+            <Button Content="ApplInfo" Command="{Binding ShowInfoCommand}" Margin="5,0"/>
         </StackPanel>
     </Grid>
 </Window>
