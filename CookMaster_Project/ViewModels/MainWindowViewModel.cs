@@ -112,9 +112,15 @@ namespace CookMaster_Project.ViewModel
         //such as adding new users or verifying user information.
         private void OpenRegisterWindow()
         {
-            RegisterWindow registerWindow = new RegisterWindow(_userManager);
+            //Open RegisterWindow first so as not to close MainWindow immediately
+            var registerWindow = new RegisterWindow(_userManager);
             registerWindow.Show();
 
+            // Close the current MainWindow
+            Application.Current.Windows
+                .OfType<Window>()
+                .FirstOrDefault(w => w is MainWindow)?
+                .Close();
         }
 
 
