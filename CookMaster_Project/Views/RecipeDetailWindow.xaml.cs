@@ -22,6 +22,8 @@ namespace CookMaster_Project.Views
         public RecipeDetailWindow(Models.Recipe selectedRecipe)
         {
             InitializeComponent();
+            // Set DataContext to the selected recipe so XAML can bind to its properties
+            DataContext = selectedRecipe ?? throw new System.ArgumentNullException(nameof(selectedRecipe));
         }
     }
 }

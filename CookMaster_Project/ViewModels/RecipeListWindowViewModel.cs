@@ -2,12 +2,10 @@ using CookMaster_Project.Managers;
 using CookMaster_Project.Models;
 using CookMaster_Project.MVVM;
 using CookMaster_Project.Views;
-using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.Intrinsics.X86;
 using System.Windows;
 using System.Windows.Input;
 
@@ -57,6 +55,7 @@ namespace CookMaster_Project.ViewModel
         {
             _userManager = userManager;
 
+
             AddRecipeCommand = new RelayCommand(execute => OpenAddRecipeWindow());
             RemoveRecipeCommand = new RelayCommand(execute => RemoveRecipe(), canExecute => SelectedRecipe != null);
             ViewDetailsCommand = new RelayCommand(execute => OpenRecipeDetailsWindow(), canExecute => SelectedRecipe != null);
@@ -67,8 +66,32 @@ namespace CookMaster_Project.ViewModel
             LoadRecipes();
         }
 
+        // In case of being created from XAML/design: pulling UserManagers from App.Resources.
         public RecipeListWindowViewModel()
         {
+            if (Application.Current?.Resources["UserManagers"] is UserManagers um)
+            {
+                _userManager = um;
+
+                AddRecipeCommand = new RelayCommand(execute => OpenAddRecipeWindow());
+                RemoveRecipeCommand = new RelayCommand(execute => RemoveRecipe(), canExecute => SelectedRecipe != null);
+                ViewDetailsCommand = new RelayCommand(execute => OpenRecipeDetailsWindow(), canExecute => SelectedRecipe != null);
+                OpenUserDetailsCommand = new RelayCommand(execute => OpenUserDetailsWindow());
+                SignOutCommand = new RelayCommand(execute => SignOut());
+                ShowInfoCommand = new RelayCommand(execute => ShowInfo());
+
+                LoadRecipes();
+            }
+            else
+            {
+                // Prevent Null in case of design/run without resources (no data will be loaded)
+                AddRecipeCommand = new RelayCommand(execute => { });
+                RemoveRecipeCommand = new RelayCommand(execute => { }, canExecute => false);
+                ViewDetailsCommand = new RelayCommand(execute => { }, canExecute => false);
+                OpenUserDetailsCommand = new RelayCommand(execute => { });
+                SignOutCommand = new RelayCommand(execute => { });
+                ShowInfoCommand = new RelayCommand(execute => { });
+            }
         }
 
         private void LoadRecipes()
@@ -76,11 +99,21 @@ namespace CookMaster_Project.ViewModel
             // The LoadRecipes method loads recipes from a data source (in this case, UserManagers)
             // and adds them to the Recipes collection, then calls ApplyFilters to filter the data before displaying it in the UI.
 
-            var recipes = _userManager.Recipes; 
 
-            foreach (var recipe in recipes)
+            Recipes.Clear();
+
+            var current = _userManager.GetLoggedInUser();
+            var source = _userManager.Recipes.AsEnumerable();
+
+            // Admin sees all; Regular users only see their own.
+            if (current != null && !current.IsAdmin)
             {
-                Recipes.Add((Recipe)recipe);
+                source = source.Where(r => string.Equals(r.CreatedBy, current.Username, StringComparison.OrdinalIgnoreCase));
+            }
+
+            foreach (var recipe in source)
+            {
+                Recipes.Add(recipe);
             }
 
             ApplyFilters();
@@ -110,7 +143,6 @@ namespace CookMaster_Project.ViewModel
         //MainWindow will be the owner of AddRecipeWindow
         // Show AddRecipeWindow as a dialog 
         //After closing the AddRecipeWindow window, the LoadRecipes method is called to load a new list of recipes and refresh the UI.
-
         private void OpenAddRecipeWindow()
         {
             AddRecipeWindow addRecipeWindow = new AddRecipeWindow()
@@ -132,8 +164,9 @@ namespace CookMaster_Project.ViewModel
                 return;
             }
 
-            Recipes.Remove(SelectedRecipe);
-            ApplyFilters();
+            // Delete through the central data source and reload to make the UI/FILTER consistent.
+            _userManager.RemoveRecipe(SelectedRecipe);
+            LoadRecipes();
         }
 
 
@@ -170,7 +203,12 @@ namespace CookMaster_Project.ViewModel
         private void SignOut()
         {
             _userManager.Logout();
-            Application.Current.MainWindow?.Close();
+
+            //Close the window where DataContext == this (supports if MainWindow is not the current page)
+            Application.Current.Windows
+                ?.OfType<Window>()
+                ?.FirstOrDefault(w => w.DataContext == this)
+                ?.Close();
         }
 
 

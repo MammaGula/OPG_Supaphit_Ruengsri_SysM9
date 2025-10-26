@@ -25,8 +25,8 @@ namespace CookMaster_Project.ViewModels
             {
                 _username = value;
                 OnPropertyChanged();
-                // Load security questions immediately when changing username
-                SecurityQuestion = _userManager.GetSecurityQuestion(_username) ?? "(????????????????)";
+                // Load security question immediately when changing username
+                SecurityQuestion = _userManager.GetSecurityQuestion(_username) ?? string.Empty;
                 CommandManager.InvalidateRequerySuggested();
             }
         }
@@ -73,14 +73,19 @@ namespace CookMaster_Project.ViewModels
 
         private bool CanReset()
         {
-            bool hasUser = !string.IsNullOrWhiteSpace(Username) && !string.IsNullOrWhiteSpace(SecurityQuestion) && SecurityQuestion != "(????????????????)";
+            bool hasUser =
+                !string.IsNullOrWhiteSpace(Username) &&
+                !string.IsNullOrWhiteSpace(SecurityQuestion);
+
             bool passOk = !string.IsNullOrWhiteSpace(NewPassword) &&
                           !string.IsNullOrWhiteSpace(ConfirmPassword) &&
                           NewPassword.Length >= 8 &&
                           NewPassword.Any(char.IsDigit) &&
                           NewPassword.Any(ch => !char.IsLetterOrDigit(ch)) &&
                           NewPassword == ConfirmPassword;
+
             bool answerOk = !string.IsNullOrWhiteSpace(SecurityAnswer);
+
             return hasUser && passOk && answerOk;
         }
 

@@ -139,7 +139,8 @@ namespace CookMaster_Project.Managers
         // Logout method
         public void Logout()
         {
-            LoggedIn = null;// Bug fix: Clear real state
+            LoggedIn = null;
+            _loggedIn = null; // Clear the state of GetLoggedInUser()
         }
 
 
