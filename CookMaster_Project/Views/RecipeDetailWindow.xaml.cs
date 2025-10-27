@@ -19,8 +19,8 @@ namespace CookMaster_Project.Views
             // Pull shared UserManagers from App resources to keep one central data source
             var userManagers = (UserManagers)Application.Current.Resources["UserManagers"];
 
-            // Bind to DataContext (only). All logic is in the ViewModel.
-            DataContext = new RecipeDetailWindowViewModel(userManagers, selectedRecipe);
+            // Bind to DataContext. Pass both services.
+            DataContext = new RecipeDetailWindowViewModel(userManagers, recipeService, selectedRecipe);
         }
 
         // Optional parameterless constructor for design-time support
@@ -41,7 +41,9 @@ namespace CookMaster_Project.Views
                     CreatedBy = "admin"
                 };
 
-                DataContext = new RecipeDetailWindowViewModel(userManagers, sample);
+                // Create a service for design-time
+                var recipeService = new RecipeManager(userManagers);
+                DataContext = new RecipeDetailWindowViewModel(userManagers, recipeService, sample);
             }
         }
     }

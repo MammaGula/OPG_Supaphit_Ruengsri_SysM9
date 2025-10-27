@@ -9,11 +9,10 @@ using System.Windows.Input;
 
 namespace CookMaster_Project.ViewModels
 {
-    // ViewModel inherits from RecipeManager 
-    // The base class gives us access to the shared Recipes collection and Add/Remove methods.
-    public class RecipeDetailWindowViewModel : RecipeManager
+    public class RecipeDetailWindowViewModel : BaseViewModel
     {
         private readonly UserManagers _userManagers;
+        private readonly IRecipeService _recipeService;
         private readonly Recipe _original; // Keep reference to the original recipe object
 
         private string _title = string.Empty;
@@ -56,10 +55,10 @@ namespace CookMaster_Project.ViewModels
         public ICommand CancelCommand { get; }
         public ICommand CopyAsNewCommand { get; }
 
-        public RecipeDetailWindowViewModel(UserManagers userManagers, Recipe selected)
-            : base(userManagers) // Use shared collection via UserManagers
+        public RecipeDetailWindowViewModel(UserManagers userManagers, IRecipeService recipeService, Recipe selected)
         {
             _userManagers = userManagers;
+            _recipeService = recipeService;
             _original = selected;
 
             // Initialize fields from the original recipe
@@ -148,8 +147,7 @@ namespace CookMaster_Project.ViewModels
                 CreatedDate = DateTime.Now
             };
 
-            // Add to shared collection through the base class service
-            AddRecipe(clone);
+            _recipeService.AddRecipe(clone);
 
             MessageBox.Show("Recipe copied as new.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
@@ -167,13 +165,6 @@ namespace CookMaster_Project.ViewModels
                 ?.OfType<Window>()
                 ?.FirstOrDefault(w => ReferenceEquals(w.DataContext, this))
                 ?.Close();
-        }
-
-        
-        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(name));
         }
     }
 }
