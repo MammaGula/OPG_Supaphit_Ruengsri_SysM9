@@ -268,11 +268,26 @@ namespace CookMaster_Project.ViewModel
                 return;
             }
 
-            var recipeDetailWindow = new RecipeDetailWindow(SelectedRecipe, _recipeService)
+            try
             {
-                Owner = Application.Current.MainWindow
-            };
-            recipeDetailWindow.ShowDialog();
+                //// Safely select the current window's owner (don't use Application.Current.MainWindow, as it's already closed).
+                var ownerWindow =
+                    Application.Current?.Windows?.OfType<Window>()?.FirstOrDefault(window => ReferenceEquals(window.DataContext, this))
+                    ?? Application.Current?.Windows?.OfType<Window>()?.FirstOrDefault(window => window.IsActive);
+
+                var recipeDetailWindow = new RecipeDetailWindow(SelectedRecipe, _recipeService);
+
+                if (ownerWindow != null && ownerWindow.IsLoaded)
+                {
+                    recipeDetailWindow.Owner = ownerWindow;
+                }
+
+                recipeDetailWindow.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to open recipe details. {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
 

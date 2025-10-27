@@ -1,47 +1,112 @@
 ﻿<Window x:Class="CookMaster_Project.Views.RecipeDetailWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Recipe Details" Height="350" Width="500">
-    <ScrollViewer Margin="16">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+        Title="Recipe Details" Height="520" Width="640" WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Text="Recipe Details" FontSize="20" FontWeight="Bold" />
+
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="160"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="140"/>
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Text="Title:" Grid.Row="0" Grid.Column="0" Margin="4" FontWeight="Bold"/>
-            <TextBlock Text="{Binding Title}" Grid.Row="0" Grid.Column="1" Margin="4"/>
+            <!-- Title -->
+            <TextBlock Grid.Column="0" Text="Title:" VerticalAlignment="Center" Margin="0,0,8,8"/>
+            <TextBox Grid.Column="1" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,0,0,8" IsEnabled="{Binding IsEditing}" />
 
-            <TextBlock Text="Type:" Grid.Row="1" Grid.Column="0" Margin="4" FontWeight="Bold"/>
-            <TextBlock Text="{Binding Type}" Grid.Row="1" Grid.Column="1" Margin="4"/>
+            <!-- Description -->
+            <TextBlock Grid.Column="0" Text="Description:" VerticalAlignment="Top" Margin="0,0,8,8" Grid.Row="1"/>
+            <TextBox Grid.Column="1" Grid.Row="1"
+                     Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,0,0,8" Height="60" AcceptsReturn="True" TextWrapping="Wrap"
+                     IsEnabled="{Binding IsEditing}" />
 
-            <TextBlock Text="Time (minutes):" Grid.Row="2" Grid.Column="0" Margin="4" FontWeight="Bold"/>
-            <TextBlock Text="{Binding TimeMinutes}" Grid.Row="2" Grid.Column="1" Margin="4"/>
+            <!-- Ingredients -->
+            <TextBlock Grid.Column="0" Text="Ingredients:" VerticalAlignment="Top" Margin="0,0,8,8" Grid.Row="2"/>
+            <TextBox Grid.Column="1" Grid.Row="2"
+                     Text="{Binding Ingredients, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,0,0,8" Height="90" AcceptsReturn="True" TextWrapping="Wrap"
+                     IsEnabled="{Binding IsEditing}" />
 
-            <TextBlock Text="Created By:" Grid.Row="3" Grid.Column="0" Margin="4" FontWeight="Bold"/>
-            <TextBlock Text="{Binding CreatedBy}" Grid.Row="3" Grid.Column="1" Margin="4"/>
+            <!-- Instructions -->
+            <TextBlock Grid.Column="0" Text="Instructions:" VerticalAlignment="Top" Margin="0,0,8,8" Grid.Row="3"/>
+            <TextBox Grid.Column="1" Grid.Row="3"
+                     Text="{Binding Instructions, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,0,0,8" Height="90" AcceptsReturn="True" TextWrapping="Wrap"
+                     IsEnabled="{Binding IsEditing}" />
 
-            <TextBlock Text="Created Date:" Grid.Row="4" Grid.Column="0" Margin="4" FontWeight="Bold"/>
-            <TextBlock Text="{Binding CreatedDate, StringFormat=yyyy-MM-dd HH:mm}" Grid.Row="4" Grid.Column="1" Margin="4"/>
+            <!-- Type -->
+            <TextBlock Grid.Column="0" Text="Type:" VerticalAlignment="Center" Margin="0,0,8,8" Grid.Row="4"/>
+            <ComboBox Grid.Column="1" Grid.Row="4"
+                      ItemsSource="{Binding Types}"
+                      SelectedItem="{Binding SelectedType, UpdateSourceTrigger=PropertyChanged}"
+                      Margin="0,0,0,8" IsEnabled="{Binding IsEditing}" />
 
-            <TextBlock Text="Description:" Grid.Row="5" Grid.Column="0" Margin="4" FontWeight="Bold" VerticalAlignment="Top"/>
-            <TextBlock Text="{Binding Description}" Grid.Row="5" Grid.Column="1" Margin="4" TextWrapping="Wrap"/>
+            <!-- Time (minutes) -->
+            <TextBlock Grid.Column="0" Text="Time (minutes):" VerticalAlignment="Center" Margin="0,0,8,8" Grid.Row="5"/>
+            <TextBox Grid.Column="1" Grid.Row="5"
+                     Text="{Binding TimeMinutesText, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,0,0,8" IsEnabled="{Binding IsEditing}" />
 
-            <TextBlock Text="Ingredients:" Grid.Row="6" Grid.Column="0" Margin="4" FontWeight="Bold" VerticalAlignment="Top"/>
-            <TextBlock Text="{Binding Ingredients}" Grid.Row="6" Grid.Column="1" Margin="4" TextWrapping="Wrap"/>
+            <!-- Metadata (read-only) -->
+            <TextBlock Grid.Column="0" Text="Created By:" VerticalAlignment="Center" Margin="0,0,8,8" Grid.Row="6"/>
+            <TextBlock Grid.Column="1" Grid.Row="6"
+                       Text="{Binding CreatedByLabel}" Margin="0,0,0,8" />
 
-            <TextBlock Text="Instructions:" Grid.Row="7" Grid.Column="0" Margin="4" FontWeight="Bold" VerticalAlignment="Top"/>
-            <TextBlock Text="{Binding Instructions}" Grid.Row="7" Grid.Column="1" Margin="4" TextWrapping="Wrap"/>
+            <TextBlock Grid.Column="0" Text="Created Date:" VerticalAlignment="Center" Margin="0,0,8,0" Grid.Row="7"/>
+            <TextBlock Grid.Column="1" Grid.Row="7"
+                       Text="{Binding CreatedDateLabel}" Margin="0,0,0,0" />
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- Title -->
+                <RowDefinition Height="Auto"/>
+                <!-- Description -->
+                <RowDefinition Height="Auto"/>
+                <!-- Ingredients -->
+                <RowDefinition Height="Auto"/>
+                <!-- Instructions -->
+                <RowDefinition Height="Auto"/>
+                <!-- Type -->
+                <RowDefinition Height="Auto"/>
+                <!-- Time -->
+                <RowDefinition Height="Auto"/>
+                <!-- CreatedBy -->
+                <RowDefinition Height="Auto"/>
+                <!-- CreatedDate -->
+            </Grid.RowDefinitions>
         </Grid>
-    </ScrollViewer>
+
+        <!-- Error message -->
+        <TextBlock Grid.Row="4" Text="{Binding ErrorMessage}" Foreground="Red" />
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" >
+            <Button Content="Edit"
+                    Margin="0,0,8,0"
+                    Command="{Binding EditCommand}" />
+            <Button Content="Save"
+                    Margin="0,0,8,0"
+                    Command="{Binding SaveCommand}" />
+            <Button Content="Copy as New"
+                    Margin="0,0,8,0"
+                    Command="{Binding CopyAsNewCommand}" />
+            <Button Content="Cancel"
+                    Command="{Binding CancelCommand}" />
+        </StackPanel>
+    </Grid>
 </Window>
