@@ -1,45 +1,78 @@
-﻿using CookMaster_Project.Models; // Import the User model
+﻿using CookMaster_Project.Models; // Import the User and AdminUser models
 using CookMaster_Project.MVVM; // Import BaseViewModel
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
-//ViewModel to manage user-related operations 
+// ViewModel to manage user-related operations 
 namespace CookMaster_Project.Managers
 {
     public class UserManagers : BaseViewModel
     {
-        private List<User> _users = new();
-        private User? _loggedIn;
+        private List<User> _users = new(); // List to store all users
+        private User? _loggedIn; // Currently logged-in user
 
-        public User? LoggedIn { get; private set; }
+        public User? LoggedIn { get; private set; } // Public property to access the logged-in user
+
+
 
         // Use as a central data source (real CRUD)
         public ObservableCollection<Recipe> Recipes { get; } = new();
-
-        //public IEnumerable<object> Recipes { get; internal set; } = new List<object>();
-        ////an interface used for iterating through data such as lists or arrays.
-        ////Recipes used only for reading recipe information, Prevents users of this property from being able to directly add or delete items in the list.
-        ////save memory and improve performance in case of large data size.
 
 
 
         // Constructor to initialize with some default users
         public UserManagers()
         {
-            _users.Add(new User { Username = "admin", Password = "password", Country = "Thailand", SecurityQuestion = "What is the Admin PIN?", SecurityAnswer = "1234", IsAdmin = true });
-            _users.Add(new User { Username = "user", Password = "password", Country = "Sweden", SecurityQuestion = "What is your lucky number", SecurityAnswer = "5678", IsAdmin = false });
+            // Add default admin and user accounts
+            _users.Add(new AdminUser
+            {
+                Username = "admin",
+                Password = "password",
+                Country = "Thailand",
+                SecurityQuestion = "What is the Admin PIN?",
+                SecurityAnswer = "1234"
+            });
+
+            _users.Add(new User
+            {
+                Username = "user",
+                Password = "password",
+                Country = "Sweden",
+                SecurityQuestion = "What is your lucky number",
+                SecurityAnswer = "5678",
+                IsAdmin = false
+            });
+
 
 
             // Initialize with some default recipes
-            Recipes.Add(new Recipe { Title = "Pancake", Description = "Sweet pancake", Ingredients = "Flour, Egg, Milk", Instructions = "Mix & fry", Type = "Dessert", TimeMinutes = 20, CreatedBy = "admin" });
-            Recipes.Add(new Recipe { Title = "fried rice", Description = "Easy and helthy meal", Ingredients = "Rice, Garlic, Sugar, Eggs, Soya suace, vegetables, meat", Instructions = "Chop & Fry", Type = "Appetizer", TimeMinutes = 10, CreatedBy = "user" });
+            Recipes.Add(new Recipe
+            {
+                Title = "Pancake",
+                Description = "Sweet pancake",
+                Ingredients = "Flour, Egg, Milk",
+                Instructions = "Mix & fry",
+                Type = "Dessert",
+                TimeMinutes = 20,
+                CreatedBy = "admin"
+            });
+
+            Recipes.Add(new Recipe
+            {
+                Title = "fried rice",
+                Description = "Easy and healthy meal",
+                Ingredients = "Rice, Garlic, Sugar, Eggs, Soy sauce, vegetables, meat",
+                Instructions = "Chop & Fry",
+                Type = "Appetizer",
+                TimeMinutes = 10,
+                CreatedBy = "user"
+            });
         }
+
 
 
         // Find the user with the given username and password, return null if not found any matching                                     
@@ -60,11 +93,11 @@ namespace CookMaster_Project.Managers
         }
 
 
+
         // Register a new user
         public bool Register(string username, string password, string country, string securityQuestion, string securityAnswer, out string message)
         {
             // Check if username already exists
-            // Any: Check if there are users in the _users list, ​​if there is at least one user , return true; otherwise, return false.
             if (_users.Any(u => string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase)))
             {
                 message = "Username is not available";
@@ -86,13 +119,11 @@ namespace CookMaster_Project.Managers
         }
 
 
-
         // Check if any user in List users
         public bool FindUser(string username)
         {
             return _users.Any(user => string.Equals(user.Username, username, StringComparison.OrdinalIgnoreCase));
         }
-
 
 
         // Change password method
@@ -120,8 +151,6 @@ namespace CookMaster_Project.Managers
             return true;
         }
 
-
-
         // Get security questions by Username
         public string? GetSecurityQuestion(string username)
         {
@@ -129,12 +158,7 @@ namespace CookMaster_Project.Managers
             return user?.SecurityQuestion;
         }
 
-
-
         public User? GetLoggedInUser() => _loggedIn;
-        //public List<User> GetAllUsers;
-
-
 
         // Logout method
         public void Logout()
@@ -143,13 +167,33 @@ namespace CookMaster_Project.Managers
             _loggedIn = null; // Clear the state of GetLoggedInUser()
         }
 
-
         // CRUD for Recipe
         public void AddRecipe(Recipe recipe) => Recipes.Add(recipe);
+
         public void RemoveRecipe(Recipe recipe)
         {
-            if (Recipes.Contains(recipe)) Recipes.Remove(recipe);
+            if (LoggedIn is AdminUser admin)
+            {
+                // Admin can remove any recipe
+                admin.RemoveRecipe(Recipes, recipe);
+            }
+            else if (LoggedIn != null && string.Equals(recipe.CreatedBy, LoggedIn.Username, StringComparison.OrdinalIgnoreCase))
+            {
+                // Regular users can only remove their own recipes
+                if (Recipes.Contains(recipe)) Recipes.Remove(recipe);
+            }
         }
 
+        // View all recipes (admin-specific functionality)
+        public IEnumerable<Recipe> ViewAllRecipes()
+        {
+            if (LoggedIn is AdminUser admin)
+            {
+                return admin.ViewAllRecipes(Recipes);
+            }
+
+            // Regular users can only view their own recipes
+            return Recipes.Where(r => string.Equals(r.CreatedBy, LoggedIn?.Username, StringComparison.OrdinalIgnoreCase));
+        }
     }
 }
