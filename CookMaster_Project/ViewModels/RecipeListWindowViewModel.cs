@@ -20,6 +20,12 @@ namespace CookMaster_Project.ViewModel
         private string _searchQuery = string.Empty;
         private string _selectedFilter = "All";
 
+        // Date range + Sort
+        private DateTime? _fromDate;
+        private DateTime? _toDate;
+        private string _sortBy = "CreatedDate";
+        private bool _sortDescending = true;
+
         public ObservableCollection<Recipe> Recipes { get; } = new();
         public ObservableCollection<Recipe> FilteredRecipes { get; } = new();
         public List<string> Filters { get; } = new() { "All", "Dessert", "Main Course", "Appetizer" };
@@ -43,6 +49,34 @@ namespace CookMaster_Project.ViewModel
         }
 
 
+        // Public properties for date filtering and sorting
+        public DateTime? FromDate
+        {
+            get => _fromDate;
+            set { _fromDate = value; OnPropertyChanged(); ApplyFilters(); }
+        }
+
+        public DateTime? ToDate
+        {
+            get => _toDate;
+            set { _toDate = value; OnPropertyChanged(); ApplyFilters(); }
+        }
+
+        public List<string> SortOptions { get; } = new() { "CreatedDate", "Title", "Type" };
+
+        public string SortBy
+        {
+            get => _sortBy;
+            set { _sortBy = value; OnPropertyChanged(); ApplyFilters(); }
+        }
+
+        public bool SortDescending
+        {
+            get => _sortDescending;
+            set { _sortDescending = value; OnPropertyChanged(); ApplyFilters(); }
+        }
+
+
 
         //Check if the value returned by ?.Username is null.If null, return "Guest". Otherwise,return the value of Username.
         public string LoggedInUsername => _userManager?.GetLoggedInUser()?.Username ?? "Guest";
@@ -53,7 +87,6 @@ namespace CookMaster_Project.ViewModel
         public ICommand OpenUserDetailsCommand { get; }
         public ICommand SignOutCommand { get; }
         public ICommand ShowInfoCommand { get; }
-
 
 
 
@@ -74,12 +107,13 @@ namespace CookMaster_Project.ViewModel
         }
 
 
+
         // In case of being created from XAML/design: pulling UserManagers from App.Resources.
         public RecipeListWindowViewModel()
         {
-            if (Application.Current?.Resources["UserManagers"] is UserManagers um)
+            if (Application.Current?.Resources["UserManagers"] is UserManagers userManagersFromResources)
             {
-                _userManager = um;
+                _userManager = userManagersFromResources;
                 _recipeService = new RecipeManager(_userManager);
 
                 AddRecipeCommand = new RelayCommand(execute => OpenAddRecipeWindow());
@@ -112,22 +146,24 @@ namespace CookMaster_Project.ViewModel
         {
             Recipes.Clear();
 
-            var current = _userManager?.GetLoggedInUser();
-            var source = _recipeService?.Recipes?.AsEnumerable() ?? Enumerable.Empty<Recipe>();
+            var currentUser = _userManager?.GetLoggedInUser();
+            var recipeSource = _recipeService?.Recipes?.AsEnumerable() ?? Enumerable.Empty<Recipe>();
 
             // Admin sees all; Regular users only see their own.
-            if (current != null && !current.IsAdmin)
+            if (currentUser != null && !currentUser.IsAdmin)
             {
-                source = source.Where(r => string.Equals(r.CreatedBy, current.Username, StringComparison.OrdinalIgnoreCase));
+                recipeSource = recipeSource.Where(recipe =>
+                    string.Equals(recipe.CreatedBy, currentUser.Username, StringComparison.OrdinalIgnoreCase));
             }
 
-            foreach (var recipe in source)
+            foreach (var recipe in recipeSource)
             {
                 Recipes.Add(recipe);
             }
 
             ApplyFilters();
         }
+
 
 
         //The ApplyFilters method is used to filter recipes in Recipes by type (SelectedFilter)
@@ -138,15 +174,39 @@ namespace CookMaster_Project.ViewModel
         {
             FilteredRecipes.Clear();
 
-            var filtered = Recipes.Where(r =>
-                (SelectedFilter == "All" || r.Type == SelectedFilter) &&
-                (string.IsNullOrWhiteSpace(SearchQuery) || r.Title.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)));
+            var filteredRecipes = Recipes.Where(recipe =>
+                (SelectedFilter == "All" || recipe.Type == SelectedFilter) &&
+                (string.IsNullOrWhiteSpace(SearchQuery) || recipe.Title.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)) &&
+                (!FromDate.HasValue || recipe.CreatedDate.Date >= FromDate.Value.Date) &&
+                (!ToDate.HasValue || recipe.CreatedDate.Date <= ToDate.Value.Date));
 
-            foreach (var recipe in filtered)
+            //  Sorting
+            IEnumerable<Recipe> orderedRecipes = filteredRecipes;
+            switch (SortBy)
+            {
+                case "Title":
+                    orderedRecipes = SortDescending
+                        ? filteredRecipes.OrderByDescending(recipe => recipe.Title)
+                        : filteredRecipes.OrderBy(recipe => recipe.Title);
+                    break;
+                case "Type":
+                    orderedRecipes = SortDescending
+                        ? filteredRecipes.OrderByDescending(recipe => recipe.Type)
+                        : filteredRecipes.OrderBy(recipe => recipe.Type);
+                    break;
+                default: // "CreatedDate"
+                    orderedRecipes = SortDescending
+                        ? filteredRecipes.OrderByDescending(recipe => recipe.CreatedDate)
+                        : filteredRecipes.OrderBy(recipe => recipe.CreatedDate);
+                    break;
+            }
+
+            foreach (var recipe in orderedRecipes)
             {
                 FilteredRecipes.Add(recipe);
             }
         }
+
 
 
         //Create AddRecipeWindow: User can fill in new recipe information such as the recipe name (Title), description (Description), type (Type), etc.
@@ -158,24 +218,24 @@ namespace CookMaster_Project.ViewModel
             try
             {
                 // Find the correct owner: the window holding this DataContext == ViewModel , or if none is found, use the Active window.
-                var owner =
-                    Application.Current?.Windows?.OfType<Window>()?.FirstOrDefault(w => ReferenceEquals(w.DataContext, this))
-                    ?? Application.Current?.Windows?.OfType<Window>()?.FirstOrDefault(w => w.IsActive);
+                var ownerWindow =
+                    Application.Current?.Windows?.OfType<Window>()?.FirstOrDefault(window => ReferenceEquals(window.DataContext, this))
+                    ?? Application.Current?.Windows?.OfType<Window>()?.FirstOrDefault(window => window.IsActive);
 
                 var addRecipeWindow = new AddRecipeWindow();
 
                 // Set Owner only if the owner is still open to avoid throwing exceptions.
-                if (owner != null && owner.IsLoaded)
+                if (ownerWindow != null && ownerWindow.IsLoaded)
                 {
-                    addRecipeWindow.Owner = owner;
+                    addRecipeWindow.Owner = ownerWindow;
                 }
 
                 addRecipeWindow.ShowDialog();
                 LoadRecipes();
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                MessageBox.Show($"Failed to open Add Recipe window. {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Failed to open Add Recipe window. {exception.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -197,6 +257,7 @@ namespace CookMaster_Project.ViewModel
         }
 
 
+
         //The OpenRecipeDetailsWindow method opens a new window (RecipeDetailWindow)
         //It checks that a recipe is selected before running and displays the window in a Modal Dialog format.
         private void OpenRecipeDetailsWindow()
@@ -213,6 +274,7 @@ namespace CookMaster_Project.ViewModel
             };
             recipeDetailWindow.ShowDialog();
         }
+
 
 
         //The OpenUserDetailsWindow method opens a new window (UserDetailsWindow)
@@ -232,21 +294,23 @@ namespace CookMaster_Project.ViewModel
         }
 
 
+
         //The SignOut method logs out the current user using the UserManagers instance
         private void SignOut()
         {
             _userManager?.Logout();
 
             // Back to MainWindow
-            var main = new MainWindow();
-            main.Show();
+            var mainWindow = new MainWindow();
+            mainWindow.Show();
 
             //Close the window where DataContext == this (supports if MainWindow is not the current page)
             Application.Current?.Windows
                 ?.OfType<Window>()
-                ?.FirstOrDefault(w => w.DataContext == this)
+                ?.FirstOrDefault(window => window.DataContext == this)
                 ?.Close();
         }
+
 
 
         //Displays an informational message box about the CookMaster application.

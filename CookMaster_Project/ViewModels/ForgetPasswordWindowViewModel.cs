@@ -31,6 +31,26 @@ namespace CookMaster_Project.ViewModels
             }
         }
 
+        //public string Username
+        //{
+        //    get => _username;
+        //    set
+        //    {
+        //        _username = value ?? string.Empty;
+        //        OnPropertyChanged();
+
+        //        // Load Security Question automatically when you change Username
+        //        var question = _userManager.GetSecurityQuestion(_username.Trim());
+        //        SecurityQuestion = question ?? string.Empty;
+
+        //        // Clear some state to prevent lingering values.
+        //        ErrorMessage = string.Empty;
+        //        SecurityAnswer = string.Empty;
+        //        NewPassword = string.Empty;
+        //        ConfirmPassword = string.Empty;
+        //    }
+        //}
+
         public string SecurityQuestion
         {
             get => _securityQuestion;
