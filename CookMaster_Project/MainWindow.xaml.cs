@@ -21,7 +21,11 @@ namespace CookMaster_Project
         public MainWindow()
         {
             InitializeComponent();
-            UserManagers userManager = new UserManagers(); // Create an instance of UserManagers
+
+            //// Use instance from App.Resources to ensure the entire app shares the same state e.g., logged in users, admin privileges, recipe list
+            var userManager = (UserManagers)Application.Current.Resources["UserManagers"];
+
+            // Pass it to the ViewModel constructor
             DataContext = new MainWindowViewModel(userManager); // Pass it to the ViewModel constructor
 
         }

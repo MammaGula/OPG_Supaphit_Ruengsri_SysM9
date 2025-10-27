@@ -155,12 +155,28 @@ namespace CookMaster_Project.ViewModel
         //After closing the AddRecipeWindow window, the LoadRecipes method is called to load a new list of recipes and refresh the UI.
         private void OpenAddRecipeWindow()
         {
-            var addRecipeWindow = new AddRecipeWindow()
+            try
             {
-                Owner = Application.Current.MainWindow
-            };
-            addRecipeWindow.ShowDialog();
-            LoadRecipes();
+                // Find the correct owner: the window holding this DataContext == ViewModel , or if none is found, use the Active window.
+                var owner =
+                    Application.Current?.Windows?.OfType<Window>()?.FirstOrDefault(w => ReferenceEquals(w.DataContext, this))
+                    ?? Application.Current?.Windows?.OfType<Window>()?.FirstOrDefault(w => w.IsActive);
+
+                var addRecipeWindow = new AddRecipeWindow();
+
+                // Set Owner only if the owner is still open to avoid throwing exceptions.
+                if (owner != null && owner.IsLoaded)
+                {
+                    addRecipeWindow.Owner = owner;
+                }
+
+                addRecipeWindow.ShowDialog();
+                LoadRecipes();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to open Add Recipe window. {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
 
