@@ -26,6 +26,9 @@ namespace CookMaster_Project.ViewModel
         private string _sortBy = "CreatedDate";
         private bool _sortDescending = true;
 
+        // Favorites filter
+        private bool _showOnlyFavorites;
+
         public ObservableCollection<Recipe> Recipes { get; } = new();
         public ObservableCollection<Recipe> FilteredRecipes { get; } = new();
         public List<string> Filters { get; } = new() { "All", "Dessert", "Main Course", "Appetizer" };
@@ -47,7 +50,6 @@ namespace CookMaster_Project.ViewModel
             get => _selectedFilter;
             set { _selectedFilter = value; OnPropertyChanged(); ApplyFilters(); }
         }
-
 
         // Public properties for date filtering and sorting
         public DateTime? FromDate
@@ -76,7 +78,11 @@ namespace CookMaster_Project.ViewModel
             set { _sortDescending = value; OnPropertyChanged(); ApplyFilters(); }
         }
 
-
+        public bool ShowOnlyFavorites
+        {
+            get => _showOnlyFavorites;
+            set { _showOnlyFavorites = value; OnPropertyChanged(); ApplyFilters(); }
+        }
 
         //Check if the value returned by ?.Username is null.If null, return "Guest". Otherwise,return the value of Username.
         public string LoggedInUsername => _userManager?.GetLoggedInUser()?.Username ?? "Guest";
@@ -178,7 +184,8 @@ namespace CookMaster_Project.ViewModel
                 (SelectedFilter == "All" || recipe.Type == SelectedFilter) &&
                 (string.IsNullOrWhiteSpace(SearchQuery) || recipe.Title.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)) &&
                 (!FromDate.HasValue || recipe.CreatedDate.Date >= FromDate.Value.Date) &&
-                (!ToDate.HasValue || recipe.CreatedDate.Date <= ToDate.Value.Date));
+                (!ToDate.HasValue || recipe.CreatedDate.Date <= ToDate.Value.Date) &&
+                (!ShowOnlyFavorites || recipe.IsFavorite));
 
             //  Sorting
             IEnumerable<Recipe> orderedRecipes = filteredRecipes;
@@ -339,3 +346,4 @@ namespace CookMaster_Project.ViewModel
         }
     }
 }
+

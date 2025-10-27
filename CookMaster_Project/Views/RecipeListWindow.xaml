@@ -5,11 +5,8 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Toolbar -->
             <RowDefinition Height="*"/>
-            <!-- List -->
             <RowDefinition Height="Auto"/>
-            <!-- Bottom buttons -->
         </Grid.RowDefinitions>
 
         <!-- Toolbar: Left=Search/Filter, Right=User/SignOut -->
@@ -43,7 +40,12 @@
                           ItemsSource="{Binding SortOptions}"
                           SelectedItem="{Binding SortBy}"
                           Margin="0,0,6,0"/>
-                <CheckBox Content="Desc" IsChecked="{Binding SortDescending}" VerticalAlignment="Center"/>
+                <CheckBox Content="Desc" IsChecked="{Binding SortDescending}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+
+                <!-- Favorites filter -->
+                <CheckBox Content="Only favorites"
+                          IsChecked="{Binding ShowOnlyFavorites}"
+                          VerticalAlignment="Center"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
@@ -57,6 +59,15 @@
         <ListView Grid.Row="1" ItemsSource="{Binding FilteredRecipes}" SelectedItem="{Binding SelectedRecipe}" Margin="10">
             <ListView.View>
                 <GridView>
+                    <!-- Favorite toggle -->
+                    <GridViewColumn Header="Fav" Width="60">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsFavorite, Mode=TwoWay}" HorizontalAlignment="Center"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
                     <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}" Width="260"/>
                     <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}" Width="120"/>
                     <GridViewColumn Header="Created" DisplayMemberBinding="{Binding CreatedDate}" Width="160"/>

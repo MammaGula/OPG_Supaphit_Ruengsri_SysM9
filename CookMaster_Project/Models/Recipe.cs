@@ -16,6 +16,9 @@ namespace CookMaster_Project.Models
         // Type of cuisine
         public string Type { get; set; } = string.Empty;
 
+        // Favorite marker
+        public bool IsFavorite { get; set; } = false;
+
 
         // Fields for tracking recipe metadata
         public string CreatedBy { get; set; } = string.Empty;     // Creator's username
