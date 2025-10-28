@@ -120,8 +120,8 @@ namespace CookMaster_Project.ViewModels
 
             MessageBox.Show("Recipe updated successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
-            // Close details window and open the list window
-            OpenRecipeListAndCloseSelf();
+            // Just close this detail dialog. Let the caller (list VM) refresh its view.
+            CloseWindow();
         }
 
         private void CopyAsNew()
@@ -150,13 +150,6 @@ namespace CookMaster_Project.ViewModels
             _recipeService.AddRecipe(clone);
 
             MessageBox.Show("Recipe copied as new.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
-        private void OpenRecipeListAndCloseSelf()
-        {
-            var listWindow = new Views.RecipeListWindow();
-            listWindow.Show();
-            CloseWindow();
         }
 
         private void CloseWindow()

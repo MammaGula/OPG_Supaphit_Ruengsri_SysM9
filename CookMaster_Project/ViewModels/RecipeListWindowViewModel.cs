@@ -289,7 +289,11 @@ namespace CookMaster_Project.ViewModel
                     recipeDetailWindow.Owner = ownerWindow;
                 }
 
+                // Show dialog and refresh list after it closes to reflect changes
                 recipeDetailWindow.ShowDialog();
+
+                // Don't close the new RecipeListWindow here, instead refresh the list to avoid duplicate windows.
+                LoadRecipes();
             }
             catch (Exception ex)
             {
@@ -346,4 +350,5 @@ namespace CookMaster_Project.ViewModel
         }
     }
 }
+
 

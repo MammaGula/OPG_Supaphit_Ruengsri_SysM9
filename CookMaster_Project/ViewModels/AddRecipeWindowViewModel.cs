@@ -21,6 +21,7 @@ namespace CookMaster_Project.ViewModels
         private string _selectedType = string.Empty;
         private string _timeMinutesText = string.Empty;
         private string _errorMessage = string.Empty;
+        private DateTime? _selectedDate = DateTime.Today;
 
         public string Title { get => _title; set { _title = value; OnPropertyChanged(); } }
         public string Description { get => _description; set { _description = value; OnPropertyChanged(); } }
@@ -29,6 +30,7 @@ namespace CookMaster_Project.ViewModels
         public string SelectedType { get => _selectedType; set { _selectedType = value; OnPropertyChanged(); } }
         public string TimeMinutesText { get => _timeMinutesText; set { _timeMinutesText = value; OnPropertyChanged(); } }
         public string ErrorMessage { get => _errorMessage; set { _errorMessage = value; OnPropertyChanged(); } }
+        public DateTime? SelectedDate { get => _selectedDate; set { _selectedDate = value; OnPropertyChanged(); } }
 
         public List<string> Types { get; } = new() { "Dessert", "Main Course", "Appetizer" };
 
@@ -60,9 +62,33 @@ namespace CookMaster_Project.ViewModels
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(Description))
+            {
+                ErrorMessage = "Description is required.";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(Ingredients))
+            {
+                ErrorMessage = "Ingredients are required.";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(Instructions))
+            {
+                ErrorMessage = "Instructions are required.";
+                return;
+            }
+
             if (!int.TryParse(TimeMinutesText, out var minutes) || minutes < 0)
             {
                 ErrorMessage = "Time (minutes) must be a non-negative number.";
+                return;
+            }
+
+            if (!SelectedDate.HasValue)
+            {
+                ErrorMessage = "Date is required.";
                 return;
             }
 
@@ -78,7 +104,7 @@ namespace CookMaster_Project.ViewModels
                 Type = SelectedType,
                 TimeMinutes = minutes,
                 CreatedBy = createdBy,
-                CreatedDate = DateTime.Now
+                CreatedDate = SelectedDate.Value.Date
             };
 
             _recipeService.AddRecipe(recipe);
