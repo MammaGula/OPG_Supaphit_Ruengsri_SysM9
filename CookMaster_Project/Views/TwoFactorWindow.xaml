@@ -1,0 +1,25 @@
+<Window x:Class="CookMaster_Project.Views.TwoFactorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Two-Factor Verification"
+        Height="180" Width="420"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="12"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="12"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Enter the 6-digit verification code sent to your email (simulated):" TextWrapping="Wrap"/>
+        <TextBox Grid.Row="2"
+                 Text="{Binding Code, UpdateSourceTrigger=PropertyChanged}"
+                 Width="160" HorizontalAlignment="Left"/>
+        <TextBlock Grid.Row="4" Text="{Binding ErrorMessage}" Foreground="Red"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="4">
+            <Button Content="Verify" Command="{Binding VerifyCommand}" Width="90" Margin="8,0,0,0"/>
+            <Button Content="Cancel" Command="{Binding CancelCommand}" Width="90" Margin="8,0,0,0"/>
+        </StackPanel>
+    </Grid>
+</Window>

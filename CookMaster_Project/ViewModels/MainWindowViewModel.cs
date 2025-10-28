@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Linq;
 
 namespace CookMaster_Project.ViewModel
 {
@@ -52,6 +53,22 @@ namespace CookMaster_Project.ViewModel
                 return;
             }
 
+            // Generate and "send" simulated code
+            var code = _userManager.GenerateTwoFactorCode(Username);
+            MessageBox.Show($"Simulation: Your verification code is {code}.", "Two-Factor Code", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            // Show 2FA dialog
+            var twoFactorWindow = new TwoFactorWindow(_userManager, Username)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            var result = twoFactorWindow.ShowDialog();
+            if (result != true)
+            {
+                MessageBox.Show("Two-factor verification failed or canceled.", "Login", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             MessageBox.Show(msg, "Login completed", MessageBoxButton.OK);
 
             // Create and show the RecipeListWindow
@@ -68,6 +85,7 @@ namespace CookMaster_Project.ViewModel
                 .FirstOrDefault(w => w is MainWindow);
             oldMain?.Close();
         }
+
 
 
 

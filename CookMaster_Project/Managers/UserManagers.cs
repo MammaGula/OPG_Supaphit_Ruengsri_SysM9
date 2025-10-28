@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security.Cryptography; // Import for RandomNumberGenerator
 
 // ViewModel to manage user-related operations 
 namespace CookMaster_Project.Managers
@@ -21,6 +22,9 @@ namespace CookMaster_Project.Managers
 
         // Use as a central data source (real CRUD)
         public ObservableCollection<Recipe> Recipes { get; } = new();
+
+        // Temporary code storage per username (case-insensitive)      
+        private readonly Dictionary<string, string> _twoFactorCodes = new(StringComparer.OrdinalIgnoreCase);
 
 
 
@@ -90,6 +94,26 @@ namespace CookMaster_Project.Managers
             _loggedIn = user;
             message = "Log in successful!";
             return true;
+        }
+
+        // Generate 6-digit code for provided username
+        public string GenerateTwoFactorCode(string username)
+        {
+            int num = RandomNumberGenerator.GetInt32(0, 1_000_000);
+            string code = num.ToString("D6");
+            _twoFactorCodes[username] = code;
+            return code;
+        }
+
+        // Validate code and consume it on success
+        public bool ValidateTwoFactorCode(string username, string code)
+        {
+            if (_twoFactorCodes.TryGetValue(username, out var stored) && string.Equals(stored, code, StringComparison.Ordinal))
+            {
+                _twoFactorCodes.Remove(username);
+                return true;
+            }
+            return false;
         }
 
 
