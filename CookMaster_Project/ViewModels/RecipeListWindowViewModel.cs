@@ -312,11 +312,26 @@ namespace CookMaster_Project.ViewModel
                 return;
             }
 
-            var userDetailsWindow = new UserDetailsWindow(_userManager)
+            try
             {
-                Owner = Application.Current.MainWindow
-            };
-            userDetailsWindow.ShowDialog();
+                // Choose owner safety
+                var ownerWindow =
+                    Application.Current?.Windows?.OfType<Window>()?.FirstOrDefault(window => ReferenceEquals(window.DataContext, this))
+                    ?? Application.Current?.Windows?.OfType<Window>()?.FirstOrDefault(window => window.IsActive);
+
+                var userDetailsWindow = new UserDetailsWindow(_userManager);
+
+                if (ownerWindow != null && ownerWindow.IsLoaded)
+                {
+                    userDetailsWindow.Owner = ownerWindow;
+                }
+
+                userDetailsWindow.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to open User Details. {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
 
@@ -350,5 +365,3 @@ namespace CookMaster_Project.ViewModel
         }
     }
 }
-
-

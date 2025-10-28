@@ -56,37 +56,18 @@ namespace CookMaster_Project.ViewModel
 
             // Create and show the RecipeListWindow
             RecipeListWindow recipeListWindow = new RecipeListWindow();
+
+            // Set it to a new MainWindow to reduce the problem of owner pointing to a closed window.
+            Application.Current.MainWindow = recipeListWindow;
+
             recipeListWindow.Show();
 
-            // Close the current MainWindow
-            Application.Current.Windows
+            // Close old MainWindow 
+            var oldMain = Application.Current.Windows
                 .OfType<Window>()
-                .FirstOrDefault(w => w is MainWindow)?
-                .Close();
+                .FirstOrDefault(w => w is MainWindow);
+            oldMain?.Close();
         }
-
-        ////private void Login()
-        ////{
-        ////    if (!_userManager.Login(Username, Password, out string msg))
-        ////    {
-        ////        MessageBox.Show(msg, "Login failed", MessageBoxButton.OK, MessageBoxImage.Warning);
-        ////        return;
-        ////    }
-
-        ////    MessageBox.Show(msg, "Login completed", MessageBoxButton.OK);
-
-        ////    // Open RecipeListWindow after successful login
-        ////    RecipeListWindow recipeListWindow = new RecipeListWindow
-        ////    {
-        ////        Owner = Application.Current.MainWindow
-        ////    };
-        ////    recipeListWindow.Show();
-
-        ////    // Close MainWindow
-        ////    Application.Current.MainWindow?.Close();
-        ////}
-
-
 
 
 

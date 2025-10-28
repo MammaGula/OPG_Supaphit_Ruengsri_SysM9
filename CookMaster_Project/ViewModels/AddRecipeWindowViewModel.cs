@@ -46,6 +46,7 @@ namespace CookMaster_Project.ViewModels
             CancelCommand = new RelayCommand(execute => CloseWindow());
         }
 
+        // Show a warning popup when validation fails.
         private void Save()
         {
             ErrorMessage = string.Empty;
@@ -53,42 +54,49 @@ namespace CookMaster_Project.ViewModels
             if (string.IsNullOrWhiteSpace(Title))
             {
                 ErrorMessage = "Title is required.";
+                MessageBox.Show(ErrorMessage, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(SelectedType))
             {
                 ErrorMessage = "Type is required.";
+                MessageBox.Show(ErrorMessage, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(Description))
             {
                 ErrorMessage = "Description is required.";
+                MessageBox.Show(ErrorMessage, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(Ingredients))
             {
                 ErrorMessage = "Ingredients are required.";
+                MessageBox.Show(ErrorMessage, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(Instructions))
             {
                 ErrorMessage = "Instructions are required.";
+                MessageBox.Show(ErrorMessage, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (!int.TryParse(TimeMinutesText, out var minutes) || minutes < 0)
             {
                 ErrorMessage = "Time (minutes) must be a non-negative number.";
+                MessageBox.Show(ErrorMessage, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (!SelectedDate.HasValue)
             {
                 ErrorMessage = "Date is required.";
+                MessageBox.Show(ErrorMessage, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
