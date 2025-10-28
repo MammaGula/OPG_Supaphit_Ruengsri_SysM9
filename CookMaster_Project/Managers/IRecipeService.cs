@@ -10,3 +10,8 @@ namespace CookMaster_Project.Managers
         void RemoveRecipe(Recipe recipe);
     }
 }
+
+
+//IRecipeService for easy decoupling and testing.
+// The Recipe has clear service usage from multiple ViewModels
+// (AddRecipeWindowViewModel, RecipeDetailWindowViewModel, RecipeListWindowViewModel)

@@ -134,7 +134,7 @@ namespace CookMaster_Project.ViewModels
 
         private void Register()
         {
-            // เคลียร์ข้อความผิดพลาดเก่า (ถ้ามี)
+            // Clear old error messages 
             ErrorMessage = string.Empty;
 
             var username = Username?.Trim() ?? string.Empty;
@@ -151,13 +151,16 @@ namespace CookMaster_Project.ViewModels
             {
                 MessageBox.Show("User registered successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                // Close RegisterWindow
+                //// Open MainWindow first and set it as the current MainWindow.
+                var newMain = new MainWindow();
+                Application.Current.MainWindow = newMain;
+                newMain.Show();
+
+                // then close RegisterWindow
                 var registerWindow = Application.Current.Windows.OfType<RegisterWindow>().FirstOrDefault();
                 registerWindow?.Close();
 
-                // Go Back to MainWindow (Reopen if Main is closed when opening Register)
-                var main = new MainWindow();
-                main.Show();
+
             }
             else
             {
@@ -175,7 +178,7 @@ namespace CookMaster_Project.ViewModels
 
             registerWindow?.Close(); // Close the RegisterWindow if found
 
-            // Reopen MainWindow to prevent window from freezing (UX and spec compliant)
+            // Reopen MainWindow to prevent window from freezing 
             var main = new MainWindow();
             main.Show();
         }

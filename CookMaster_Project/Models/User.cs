@@ -7,9 +7,9 @@ namespace CookMaster_Project.Models
         public string Country { get; set; } = string.Empty;
         public string SecurityQuestion { get; set; } = string.Empty;
         public string SecurityAnswer { get; set; } = string.Empty;
-       
-        // Admin rights: Admin can see/delete everyone's recipes.
-        public bool IsAdmin { get; set; } = false;
-    }
 
+        //Allows for modification only during object creation.
+        public bool IsAdmin { get; init; } = false;
+    }
 }
+

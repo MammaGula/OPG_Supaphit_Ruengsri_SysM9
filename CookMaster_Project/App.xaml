@@ -7,6 +7,6 @@
     <Application.Resources>
         <Managers:UserManagers x:Key="UserManagers" />
         <!-- Make sure the Converters namespace and class exist -->
-        <Converters:StringNullOrEmptyToVisibilityConverter x:Key="StringNullOrEmptyToVisibilityConverter" />
+        <!--<Converters:StringNullOrEmptyToVisibilityConverter x:Key="StringNullOrEmptyToVisibilityConverter" />-->
     </Application.Resources>
 </Application>
