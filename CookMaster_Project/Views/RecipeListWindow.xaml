@@ -1,19 +1,30 @@
 ﻿<Window x:Class="CookMaster_Project.Views.RecipeListWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Recipe List" Height="400" Width="1200">
+        Title="Recipe List" Height="400" Width="1100">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <!-- New StackPanel for User and Sign Out -->
             <RowDefinition Height="Auto"/>
+            <!-- Toolbar -->
+            <RowDefinition Height="*"/>
+            <!-- Recipe List -->
+            <RowDefinition Height="Auto"/>
+            <!-- Bottom Buttons -->
         </Grid.RowDefinitions>
 
-        <!-- Toolbar: Left=Search/Filter, Right=User/SignOut -->
-        <Grid Grid.Row="0" Margin="10">
+        <!-- New StackPanel for User and Sign Out -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
+            <TextBlock Text="{Binding LoggedInUsername}" FontSize="16" Margin="0,0,10,0"/>
+            <Button Content="User" Command="{Binding OpenUserDetailsCommand}" Margin="5,0"/>
+            <Button Content="Sign Out" Command="{Binding SignOutCommand}" Margin="5,0"/>
+        </StackPanel>
+
+        <!-- Toolbar: Left=Search/Filter -->
+        <Grid Grid.Row="1" Margin="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,8,0">
@@ -47,20 +58,14 @@
                           IsChecked="{Binding ShowOnlyFavorites}"
                           VerticalAlignment="Center"/>
             </StackPanel>
-
-            <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
-                <TextBlock Text="{Binding LoggedInUsername}" FontSize="16" Margin="0,0,10,0"/>
-                <Button Content="User" Command="{Binding OpenUserDetailsCommand}" Margin="5,0"/>
-                <Button Content="Sign Out" Command="{Binding SignOutCommand}" Margin="5,0"/>
-            </StackPanel>
         </Grid>
 
         <!-- Recipe List -->
-        <ListView Grid.Row="1" ItemsSource="{Binding FilteredRecipes}" SelectedItem="{Binding SelectedRecipe}" Margin="10">
+        <ListView Grid.Row="2" ItemsSource="{Binding FilteredRecipes}" SelectedItem="{Binding SelectedRecipe}" Margin="15">
             <ListView.View>
                 <GridView>
                     <!-- Favorite toggle -->
-                    <GridViewColumn Header="Fav" Width="60">
+                    <GridViewColumn Header="Fav" Width="100">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding IsFavorite, Mode=TwoWay}" HorizontalAlignment="Center"/>
@@ -68,20 +73,20 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
 
-                    <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}" Width="260"/>
-                    <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}" Width="120"/>
-                    <GridViewColumn Header="Created" DisplayMemberBinding="{Binding CreatedDate}" Width="160"/>
-                    <GridViewColumn Header="By" DisplayMemberBinding="{Binding CreatedBy}" Width="100"/>
+                    <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}" Width="350"/>
+                    <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}" Width="200"/>
+                    <GridViewColumn Header="Created" DisplayMemberBinding="{Binding CreatedDate}" Width="220"/>
+                    <GridViewColumn Header="By" DisplayMemberBinding="{Binding CreatedBy}" Width="200"/>
                 </GridView>
             </ListView.View>
         </ListView>
 
         <!-- Bottom Buttons -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
             <Button Content="Add Recipe" Command="{Binding AddRecipeCommand}" Margin="5,0"/>
             <Button Content="Remove Recipe" Command="{Binding RemoveRecipeCommand}" Margin="5,0"/>
             <Button Content="Details" Command="{Binding ViewDetailsCommand}" Margin="5,0"/>
-            <Button Content="Info" Command="{Binding ShowInfoCommand}" Margin="5,0"/>
+            <Button Content="AppInfo" Command="{Binding ShowInfoCommand}" Margin="5,0"/>
         </StackPanel>
     </Grid>
 </Window>

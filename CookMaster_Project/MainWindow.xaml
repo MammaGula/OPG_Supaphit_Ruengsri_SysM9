@@ -5,28 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CookMaster_Project"
         mc:Ignorable="d"
-        Title="MainWindow" Height="300" Width="400">
+        Title="MainWindow" Height="350" Width="450">
 
-    <StackPanel Margin="20" Background="Black">
-        <TextBlock Text="CookMaster" HorizontalAlignment="Center" FontSize="40" FontWeight="Bold" Foreground="LightGray"/>
+    <StackPanel Margin="10" Background="Black">
+        <TextBlock Text="CookMaster" HorizontalAlignment="Center" FontFamily="Segoe UI" FontSize="50" FontWeight="Bold" Foreground="LightGray" Margin="10"/>
+
 
         <!-- Username -->
-        <TextBlock Text="Username: " Foreground="White" HorizontalAlignment="Center"/>
-        <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" Width="234" />
+        <TextBlock Text="Username: " Foreground="White" HorizontalAlignment="Center" FontSize="13"/>
+        <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" Width="240" Height="25" VerticalAlignment="Center" FontSize="15"/>
 
         <!-- Password -->
-        <TextBlock Text="Password: " Foreground="White" HorizontalAlignment="Center"/>
-        <PasswordBox x:Name="Pwd" PasswordChanged="Pwd_PasswordChanged" Margin="0,0,0,10" Width="236" />
+        <TextBlock Text="Password: " Foreground="White" HorizontalAlignment="Center" FontSize="13"/>
+        <PasswordBox x:Name="Pwd" PasswordChanged="Pwd_PasswordChanged" Margin="0,0,0,10" Width="240" Height="25" FontSize="15"/>
 
         <!-- Log in -->
-        <Button Content="Log in" Command="{Binding LoginCommand}" Width="122" />
+        <Button Content="Log in" Command="{Binding LoginCommand}" Width="122" FontWeight="Bold"/>
 
         <TextBlock Text="{Binding Error}" Foreground="Red" Margin="0,10,0,0"/>
 
         <!-- Register Button and ForgetPassword Button -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Background="Black">
-            <Button Content="Register" Command ="{Binding OpenRegisterCommand}" Width="122" Margin="5"/>
-            <Button Content="Forget Password" Command="{Binding ForgotPasswordCommand}"  Margin="5" Width="113" />
+            <Button Content="Register" Command ="{Binding OpenRegisterCommand}" Width="122" Margin="5" FontWeight="Bold"/>
+            <Button Content="Forget Password" Command="{Binding ForgotPasswordCommand}"  Margin="5" Width="113" FontWeight="Bold"/>
 
         </StackPanel>
     </StackPanel>
