@@ -171,16 +171,17 @@ namespace CookMaster_Project.ViewModels
 
         private void Cancel()
         {
-            // Close RegisterWindow
+            // Prepare new MainWindow and set it as current MainWindow BEFORE closing RegisterWindow
+            var main = new MainWindow();
+            Application.Current.MainWindow = main;
+            main.Show();
+
+            // Now close the RegisterWindow
             var registerWindow = Application.Current.Windows
-                .OfType<RegisterWindow>() // Find only RegisterWindow
+                .OfType<RegisterWindow>()
                 .FirstOrDefault();
 
-            registerWindow?.Close(); // Close the RegisterWindow if found
-
-            // Reopen MainWindow to prevent window from freezing 
-            var main = new MainWindow();
-            main.Show();
+            registerWindow?.Close();
         }
     }
 }

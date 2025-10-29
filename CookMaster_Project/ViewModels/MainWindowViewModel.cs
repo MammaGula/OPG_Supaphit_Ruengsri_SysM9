@@ -113,6 +113,10 @@ namespace CookMaster_Project.ViewModel
         {
             //Open RegisterWindow first so as not to close MainWindow immediately
             var registerWindow = new RegisterWindow(_userManager);
+
+            // Make RegisterWindow the current MainWindow to avoid app shutdown
+            Application.Current.MainWindow = registerWindow;
+
             registerWindow.Show();
 
             // Close the current MainWindow
@@ -123,11 +127,7 @@ namespace CookMaster_Project.ViewModel
         }
 
 
-        // Events
-        public new event PropertyChangedEventHandler? PropertyChanged;
-        private new void OnPropertyChanged([CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
+
     }
 }
+

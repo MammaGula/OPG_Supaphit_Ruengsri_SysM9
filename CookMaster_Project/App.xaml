@@ -3,10 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:Managers="clr-namespace:CookMaster_Project.Managers"
              xmlns:Converters="clr-namespace:CookMaster_Project.Converters"
-             StartupUri="MainWindow.xaml">
+             StartupUri="MainWindow.xaml"
+             ShutdownMode="OnLastWindowClose">
     <Application.Resources>
         <Managers:UserManagers x:Key="UserManagers" />
         <!-- Make sure the Converters namespace and class exist -->
         <!--<Converters:StringNullOrEmptyToVisibilityConverter x:Key="StringNullOrEmptyToVisibilityConverter" />-->
     </Application.Resources>
 </Application>
+
