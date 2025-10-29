@@ -36,7 +36,14 @@ namespace CookMaster_Project.ViewModel
         public Recipe? SelectedRecipe
         {
             get => _selectedRecipe;
-            set { _selectedRecipe = value; OnPropertyChanged(); }
+            set
+            {
+                _selectedRecipe = value;
+                OnPropertyChanged();
+
+                // Refresh command states when selection changes so Details/Remove (and Favorite) buttons enable/disable correctly
+                CommandManager.InvalidateRequerySuggested();
+            }
         }
 
         public string SearchQuery
@@ -93,6 +100,7 @@ namespace CookMaster_Project.ViewModel
         public ICommand OpenUserDetailsCommand { get; }
         public ICommand SignOutCommand { get; }
         public ICommand ShowInfoCommand { get; }
+        public ICommand ToggleFavoriteCommand { get; } // Favorite mark/unmark support (assignment requirement)
 
 
 
@@ -108,6 +116,17 @@ namespace CookMaster_Project.ViewModel
             OpenUserDetailsCommand = new RelayCommand(execute => OpenUserDetailsWindow());
             SignOutCommand = new RelayCommand(execute => SignOut());
             ShowInfoCommand = new RelayCommand(execute => ShowInfo());
+            ToggleFavoriteCommand = new RelayCommand(execute => ToggleFavorite(), canExecute => SelectedRecipe != null);
+
+            // Update list and displayed username when login state changes
+            _userManager.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(UserManagers.LoggedIn))
+                {
+                    OnPropertyChanged(nameof(LoggedInUsername));
+                    LoadRecipes();
+                }
+            };
 
             LoadRecipes();
         }
@@ -128,6 +147,17 @@ namespace CookMaster_Project.ViewModel
                 OpenUserDetailsCommand = new RelayCommand(execute => OpenUserDetailsWindow());
                 SignOutCommand = new RelayCommand(execute => SignOut());
                 ShowInfoCommand = new RelayCommand(execute => ShowInfo());
+                ToggleFavoriteCommand = new RelayCommand(execute => ToggleFavorite(), canExecute => SelectedRecipe != null);
+
+                // Update list and displayed username when login state changes
+                _userManager.PropertyChanged += (_, e) =>
+                {
+                    if (e.PropertyName == nameof(UserManagers.LoggedIn))
+                    {
+                        OnPropertyChanged(nameof(LoggedInUsername));
+                        LoadRecipes();
+                    }
+                };
 
                 LoadRecipes();
             }
@@ -141,6 +171,7 @@ namespace CookMaster_Project.ViewModel
                 OpenUserDetailsCommand = new RelayCommand(execute => { });
                 SignOutCommand = new RelayCommand(execute => { });
                 ShowInfoCommand = new RelayCommand(execute => { });
+                ToggleFavoriteCommand = new RelayCommand(execute => { }, canExecute => false);
             }
         }
 
@@ -258,8 +289,8 @@ namespace CookMaster_Project.ViewModel
                 return;
             }
 
-            // Delete through the central data source and reload to make the UI/FILTER consistent.
-            _recipeService.RemoveRecipe(SelectedRecipe);
+            //// Use UserManagers to authenticate and delete from the central data source.
+            _userManager?.RemoveRecipe(SelectedRecipe);
             LoadRecipes();
         }
 
@@ -362,6 +393,19 @@ namespace CookMaster_Project.ViewModel
                 "About CookMaster",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
+        }
+
+        // Toggle favorite marker for selected recipe, then re-apply filters to reflect ShowOnlyFavorites
+        private void ToggleFavorite()
+        {
+            if (SelectedRecipe == null)
+            {
+                MessageBox.Show("Please select a recipe first.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            SelectedRecipe.IsFavorite = !SelectedRecipe.IsFavorite;
+            ApplyFilters();
         }
     }
 }

@@ -13,15 +13,15 @@ namespace CookMaster_Project.Managers
 {
     public class UserManagers : BaseViewModel
     {
-        private List<User> _users = new(); // List to store all users
-        private User? _loggedIn; // Currently logged-in user
+        private readonly List<User> _users = new(); // List to store all users
 
         public User? LoggedIn { get; private set; } // Public property to access the logged-in user
-
+        public bool IsLoggedIn => LoggedIn != null;
 
 
         // Use as a central data source (real CRUD)
         public ObservableCollection<Recipe> Recipes { get; } = new();
+
 
         // Temporary code storage per username (case-insensitive)      
         private readonly Dictionary<string, string> _twoFactorCodes = new(StringComparer.OrdinalIgnoreCase);
@@ -67,11 +67,11 @@ namespace CookMaster_Project.Managers
 
             Recipes.Add(new Recipe
             {
-                Title = "fried rice",
+                Title = "Fried rice",
                 Description = "Easy and healthy meal",
                 Ingredients = "Rice, Garlic, Sugar, Eggs, Soy sauce, vegetables, meat",
                 Instructions = "Chop & Fry",
-                Type = "Appetizer",
+                Type = "Main Course",
                 TimeMinutes = 10,
                 CreatedBy = "user"
             });
@@ -83,18 +83,25 @@ namespace CookMaster_Project.Managers
         public bool Login(string username, string password, out string message)
         {
             // Find the user in the _users list.
-            User? user = _users.FirstOrDefault(u => string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase) && u.Password == password);
+            var user = _users.FirstOrDefault(u =>
+                string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase) &&
+                u.Password == password);
             if (user == null)
             {
                 message = "Invalid username or password";
                 return false;
             }
 
+
             LoggedIn = user;
-            _loggedIn = user;
+            OnPropertyChanged(nameof(LoggedIn));
+            OnPropertyChanged(nameof(IsLoggedIn));
+
             message = "Log in successful!";
             return true;
         }
+
+
 
         // Generate 6-digit code for provided username
         public string GenerateTwoFactorCode(string username)
@@ -175,6 +182,8 @@ namespace CookMaster_Project.Managers
             return true;
         }
 
+
+
         // Get security questions by Username
         public string? GetSecurityQuestion(string username)
         {
@@ -182,14 +191,18 @@ namespace CookMaster_Project.Managers
             return user?.SecurityQuestion;
         }
 
-        public User? GetLoggedInUser() => _loggedIn;
+        public User? GetLoggedInUser() => LoggedIn;
+
+
 
         // Logout method
         public void Logout()
         {
             LoggedIn = null;
-            _loggedIn = null; // Clear the state of GetLoggedInUser()
+            OnPropertyChanged(nameof(LoggedIn));
+            OnPropertyChanged(nameof(IsLoggedIn));
         }
+
 
         // CRUD for Recipe
         public void AddRecipe(Recipe recipe) => Recipes.Add(recipe);
@@ -207,6 +220,7 @@ namespace CookMaster_Project.Managers
                 if (Recipes.Contains(recipe)) Recipes.Remove(recipe);
             }
         }
+
 
         // View all recipes (admin-specific functionality)
         public IEnumerable<Recipe> ViewAllRecipes()
