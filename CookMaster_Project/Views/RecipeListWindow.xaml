@@ -17,8 +17,8 @@
         <!-- New StackPanel for User and Sign Out -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
             <TextBlock Text="{Binding LoggedInUsername}" FontSize="16" Margin="0,0,10,0"/>
-            <Button Content="User" Command="{Binding OpenUserDetailsCommand}" Margin="5,0"/>
-            <Button Content="Sign Out" Command="{Binding SignOutCommand}" Margin="5,0"/>
+            <Button Content="User" Command="{Binding OpenUserDetailsCommand}" Margin="5,0" Width="70"/>
+            <Button Content="Sign Out" Command="{Binding SignOutCommand}" Margin="5,0" Width="70"/>
         </StackPanel>
 
         <!-- Toolbar: Left=Search/Filter -->
@@ -83,10 +83,10 @@
 
         <!-- Bottom Buttons -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-            <Button Content="Add Recipe" Command="{Binding AddRecipeCommand}" Margin="5,0"/>
-            <Button Content="Remove Recipe" Command="{Binding RemoveRecipeCommand}" Margin="5,0"/>
-            <Button Content="Details" Command="{Binding ViewDetailsCommand}" Margin="5,0"/>
-            <Button Content="AppInfo" Command="{Binding ShowInfoCommand}" Margin="5,0"/>
+            <Button Content="Add Recipe" Command="{Binding AddRecipeCommand}" Margin="5,0" Width="70" />
+            <Button Content="Remove" Command="{Binding RemoveRecipeCommand}" Margin="5,0" Width="70"/>
+            <Button Content="Details" Command="{Binding ViewDetailsCommand}" Margin="5,0" Width="70"/>
+            <Button Content="Info" Command="{Binding ShowInfoCommand}" Margin="5,0" Width="70"/>
         </StackPanel>
     </Grid>
 </Window>

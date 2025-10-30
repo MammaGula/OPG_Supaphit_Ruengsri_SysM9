@@ -127,6 +127,8 @@ namespace CookMaster_Project.ViewModels
         private void CopyAsNew()
         {
             var currentUser = _userManagers.GetLoggedInUser();
+
+            // //Retrieves the currently logged in user, if no user is logged in, set createdBy to "Guest".
             var createdBy = currentUser?.Username ?? "Guest";
 
             if (!int.TryParse(TimeMinutesText, out var minutes) || minutes < 0)

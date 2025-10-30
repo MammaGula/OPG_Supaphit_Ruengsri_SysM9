@@ -18,6 +18,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
+        
         <TextBlock Text="Username:" Grid.Row="0" Grid.Column="0" Margin="5"/>
         <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1" Margin="5"/>
 

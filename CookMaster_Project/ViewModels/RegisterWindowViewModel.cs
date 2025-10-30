@@ -156,7 +156,8 @@ namespace CookMaster_Project.ViewModels
                 Application.Current.MainWindow = newMain;
                 newMain.Show();
 
-                // then close RegisterWindow
+                // Searches for any open RegisterWindow windows in the application,
+                // and if it finds one, it closes it by calling the Close() method.
                 var registerWindow = Application.Current.Windows.OfType<RegisterWindow>().FirstOrDefault();
                 registerWindow?.Close();
 
@@ -176,7 +177,7 @@ namespace CookMaster_Project.ViewModels
             Application.Current.MainWindow = main;
             main.Show();
 
-            // Now close the RegisterWindow
+            // Find RegisterWindow close the RegisterWindow
             var registerWindow = Application.Current.Windows
                 .OfType<RegisterWindow>()
                 .FirstOrDefault();

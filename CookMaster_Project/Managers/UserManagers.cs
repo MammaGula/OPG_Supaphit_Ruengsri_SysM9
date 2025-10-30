@@ -13,9 +13,9 @@ namespace CookMaster_Project.Managers
 {
     public class UserManagers : BaseViewModel
     {
-        private readonly List<User> _users = new(); // List to store all users
+        private readonly List<User> _users = new(); // List to store all users, Only UserManagers can access it
 
-        public User? LoggedIn { get; private set; } // Public property to access the logged-in user
+        public User? LoggedIn { get; private set; } // Public property to access the logged-in user, only UserManagers can set it
         public bool IsLoggedIn => LoggedIn != null;
 
 
@@ -50,8 +50,6 @@ namespace CookMaster_Project.Managers
                 SecurityAnswer = "5678",
                 IsAdmin = false
             });
-
-
 
             // Initialize with some default recipes
             Recipes.Add(new Recipe
@@ -93,7 +91,7 @@ namespace CookMaster_Project.Managers
             }
 
 
-            LoggedIn = user;
+            LoggedIn = user; //We found a matching user, set as logged in
             OnPropertyChanged(nameof(LoggedIn));
             OnPropertyChanged(nameof(IsLoggedIn));
 
@@ -128,7 +126,7 @@ namespace CookMaster_Project.Managers
         // Register a new user
         public bool Register(string username, string password, string country, string securityQuestion, string securityAnswer, out string message)
         {
-            // Check if username already exists
+            // Check if username already exists(LINQ)
             if (_users.Any(u => string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase)))
             {
                 message = "Username is not available";

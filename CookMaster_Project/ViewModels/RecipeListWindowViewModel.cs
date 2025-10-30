@@ -111,8 +111,8 @@ namespace CookMaster_Project.ViewModel
             _recipeService = recipeService ?? new RecipeManager(_userManager);
 
             AddRecipeCommand = new RelayCommand(execute => OpenAddRecipeWindow());
-            RemoveRecipeCommand = new RelayCommand(execute => RemoveRecipe(), canExecute => SelectedRecipe != null);
-            ViewDetailsCommand = new RelayCommand(execute => OpenRecipeDetailsWindow(), canExecute => SelectedRecipe != null);
+            RemoveRecipeCommand = new RelayCommand(execute => RemoveRecipe()/*, canExecute => SelectedRecipe != null*/);
+            ViewDetailsCommand = new RelayCommand(execute => OpenRecipeDetailsWindow()/*, canExecute => SelectedRecipe != null*/);
             OpenUserDetailsCommand = new RelayCommand(execute => OpenUserDetailsWindow());
             SignOutCommand = new RelayCommand(execute => SignOut());
             ShowInfoCommand = new RelayCommand(execute => ShowInfo());

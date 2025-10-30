@@ -20,7 +20,7 @@
         <PasswordBox x:Name="Pwd" PasswordChanged="Pwd_PasswordChanged" Margin="0,0,0,10" Width="240" Height="25" FontSize="15"/>
 
         <!-- Log in -->
-        <Button Content="Log in" Command="{Binding LoginCommand}" Width="122" FontWeight="Bold"/>
+        <Button Content="Sign in" Command="{Binding LoginCommand}" Width="122" FontWeight="Bold"/>
 
         <TextBlock Text="{Binding Error}" Foreground="Red" Margin="0,10,0,0"/>
 
