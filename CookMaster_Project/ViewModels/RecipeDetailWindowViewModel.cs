@@ -45,6 +45,7 @@ namespace CookMaster_Project.ViewModels
             {
                 var u = _userManagers.GetLoggedInUser();
                 if (u == null) return false;
+
                 if (u.IsAdmin) return true;
                 return string.Equals(_original.CreatedBy, u.Username, StringComparison.OrdinalIgnoreCase);
             }
@@ -55,6 +56,8 @@ namespace CookMaster_Project.ViewModels
         public ICommand CancelCommand { get; }
         public ICommand CopyAsNewCommand { get; }
 
+
+        // Constructor
         public RecipeDetailWindowViewModel(UserManagers userManagers, IRecipeService recipeService, Recipe selected)
         {
             _userManagers = userManagers;
@@ -87,6 +90,8 @@ namespace CookMaster_Project.ViewModels
             IsEditing = true;
         }
 
+
+        //  Validate and save changes to the original recipe object
         private void Save()
         {
             ErrorMessage = string.Empty;
@@ -124,11 +129,12 @@ namespace CookMaster_Project.ViewModels
             CloseWindow();
         }
 
+
+        // Create a new recipe by copying the current one
         private void CopyAsNew()
         {
+            //Retrieves the currently logged in user, if no user is logged in, set createdBy to "Guest".
             var currentUser = _userManagers.GetLoggedInUser();
-
-            // //Retrieves the currently logged in user, if no user is logged in, set createdBy to "Guest".
             var createdBy = currentUser?.Username ?? "Guest";
 
             if (!int.TryParse(TimeMinutesText, out var minutes) || minutes < 0)
@@ -137,6 +143,8 @@ namespace CookMaster_Project.ViewModels
                 return;
             }
 
+
+            // Create a new Recipe object as a clone of the original with modifications
             var clone = new Recipe
             {
                 Title = string.IsNullOrWhiteSpace(Title) ? $"{_original.Title} - Copy" : $"{Title.Trim()} - Copy",
@@ -149,10 +157,13 @@ namespace CookMaster_Project.ViewModels
                 CreatedDate = DateTime.Now
             };
 
+            // Save the cloned recipe via IRecipeService
             _recipeService.AddRecipe(clone);
 
             MessageBox.Show("Recipe copied as new.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
+
 
         private void CloseWindow()
         {

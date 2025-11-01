@@ -7,11 +7,16 @@ namespace CookMaster_Project.Managers
     {
         private readonly ObservableCollection<Recipe> _recipes;
 
-        // Use the same collection as UserManagers to avoid duplicate data.
-        public RecipeManager(UserManagers userManagers)
-            : this(userManagers.Recipes)
-        {
-        }
+
+
+        // A delegate constructor of the same class, using this(...) to call another constructor in the RecipeManager class.
+        // public RecipeManager(UserManagers userManagers) is an overload that takes UserManagers.
+        // : this(userManagers.Recipes) is passed to another constructor that takes ObservableCollection<Recipe>,
+        // causing the RecipeManager to use the same Recipes collection as the UserManagers.
+        // Result: Adding / removing recipes to the RecipeManager is immediately reflected in the UserManagers
+        // (single source of truth), and the UI bound to that collection is automatically updated in WPF.
+
+        public RecipeManager(UserManagers userManagers) : this(userManagers.Recipes) { }
 
         public RecipeManager(ObservableCollection<Recipe> sharedRecipes)
         {
@@ -33,10 +38,3 @@ namespace CookMaster_Project.Managers
 }
 
 
-
-//public RecipeManager(UserManagers userManagers): this(userManagers.Recipes){ }
-
-//A delegate constructor of the same class, using this(...) to call another constructor in the RecipeManager class.
-//public RecipeManager(UserManagers userManagers) is an overload that takes UserManagers.
-// : this(userManagers.Recipes) is passed to another constructor that takes ObservableCollection<Recipe> , causing the RecipeManager to use the same Recipes collection as the UserManagers.
-// Result: Adding / removing recipes to the RecipeManager is immediately reflected in the UserManagers (single source of truth), and the UI bound to that collection is automatically updated in WPF.

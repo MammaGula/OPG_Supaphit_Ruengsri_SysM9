@@ -13,5 +13,5 @@ namespace CookMaster_Project.Managers
 
 
 //IRecipeService for easy decoupling and testing.
-// The Recipe has clear service usage from multiple ViewModels
+// The Recipe has clear service usage from multiple ViewModels, Flexible implementation changes in the future.
 // (AddRecipeWindowViewModel, RecipeDetailWindowViewModel, RecipeListWindowViewModel)

@@ -9,6 +9,7 @@ namespace CookMaster_Project.Views
     /// </summary>
     public partial class AddRecipeWindow : Window
     {
+        // Constructor for Design-time support, no parameters, can create instance
         public AddRecipeWindow()
         {
             InitializeComponent();
@@ -20,6 +21,8 @@ namespace CookMaster_Project.Views
         }
 
 
+
+        // Constructor for Run-time with dependency injection
         public AddRecipeWindow(UserManagers userManager, IRecipeService recipeService)
         {
             InitializeComponent();

@@ -100,9 +100,12 @@ namespace CookMaster_Project.ViewModels
                 return;
             }
 
+
+            // Retrieve the logged in user information.
             var user = _userManagers.GetLoggedInUser();
             var createdBy = user?.Username ?? "Guest";
 
+            // Create a new Recipe object
             var recipe = new Recipe
             {
                 Title = Title.Trim(),
@@ -115,6 +118,7 @@ namespace CookMaster_Project.ViewModels
                 CreatedDate = SelectedDate.Value.Date
             };
 
+            // Save a new recipe via IRecipeService
             _recipeService.AddRecipe(recipe);
             MessageBox.Show("Recipe added successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             CloseWindow();

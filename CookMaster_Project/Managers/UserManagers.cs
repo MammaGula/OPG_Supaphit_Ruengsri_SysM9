@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography; // Import for RandomNumberGenerator
 
+
 // ViewModel to manage user-related operations 
 namespace CookMaster_Project.Managers
 {
@@ -207,15 +208,25 @@ namespace CookMaster_Project.Managers
 
         public void RemoveRecipe(Recipe recipe)
         {
-            if (LoggedIn is AdminUser admin)
+            // Admin can remove any recipe
+            if (LoggedIn is AdminUser)
             {
-                // Admin can remove any recipe
-                admin.RemoveRecipe(Recipes, recipe);
+                if (recipe != null && Recipes.Contains(recipe))
+                {
+                    Recipes.Remove(recipe);
+                }
+                return;
             }
-            else if (LoggedIn != null && string.Equals(recipe.CreatedBy, LoggedIn.Username, StringComparison.OrdinalIgnoreCase))
+
+
+
+            // Regular users can only remove their own recipes
+            if (LoggedIn != null &&
+                recipe != null &&
+                string.Equals(recipe.CreatedBy, LoggedIn.Username, StringComparison.OrdinalIgnoreCase) &&
+                Recipes.Contains(recipe))
             {
-                // Regular users can only remove their own recipes
-                if (Recipes.Contains(recipe)) Recipes.Remove(recipe);
+                Recipes.Remove(recipe);
             }
         }
 
@@ -223,9 +234,9 @@ namespace CookMaster_Project.Managers
         // View all recipes (admin-specific functionality)
         public IEnumerable<Recipe> ViewAllRecipes()
         {
-            if (LoggedIn is AdminUser admin)
+            if (LoggedIn is AdminUser)
             {
-                return admin.ViewAllRecipes(Recipes);
+                return Recipes;
             }
 
             // Regular users can only view their own recipes
@@ -233,3 +244,11 @@ namespace CookMaster_Project.Managers
         }
     }
 }
+
+
+//If the system is likely to add additional administrative functions in the future,
+//such as user management, activity monitoring, or permissions management,
+//an AdminManager should be added to separate responsibilities and support system expansion.
+
+//Currently, the system has simple functionality and there are no plans to add new functions,
+//so I think this is sufficient.

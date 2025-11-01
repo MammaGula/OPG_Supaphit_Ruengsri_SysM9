@@ -11,7 +11,8 @@ namespace CookMaster_Project.Views
     /// </summary>
     public partial class RecipeDetailWindow : Window
     {
-        // Constructor with dependency injection
+
+        // Constructor with dependency injection, for Run-time use
         public RecipeDetailWindow(Recipe selectedRecipe, IRecipeService recipeService)
         {
             InitializeComponent();

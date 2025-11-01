@@ -104,6 +104,8 @@ namespace CookMaster_Project.ViewModels
         public ICommand RegisterCommand { get; }
         public ICommand CancelCommand { get; }
 
+
+
         // Constructor
         public RegisterWindowViewModel(UserManagers userManager)
         {

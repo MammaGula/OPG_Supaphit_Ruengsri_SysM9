@@ -3,12 +3,14 @@ using CookMaster_Project.MVVM;
 using CookMaster_Project.Views;
 using System.Linq;
 using System.Windows;
-using System.Windows.Input;
+using System.Windows.Input; // For calling CommandManager
 
 namespace CookMaster_Project.ViewModels
 {
     public class ForgetPasswordWindowViewModel : BaseViewModel
     {
+        //Readonly: can only be assigned at declaration or in the constructor; cannot be reassigned later.
+        //This keeps the dependency stable.
         private readonly UserManagers _userManager;
 
         private string _username = string.Empty;
@@ -25,31 +27,17 @@ namespace CookMaster_Project.ViewModels
             {
                 _username = value;
                 OnPropertyChanged();
-                // Load security question immediately when changing username
+
+                // Load security question immediately when changing username, If GetSecurityQuestion returns null, initail value is string.Empty.
                 SecurityQuestion = _userManager.GetSecurityQuestion(_username) ?? string.Empty;
                 CommandManager.InvalidateRequerySuggested();
             }
         }
 
-        //public string Username
-        //{
-        //    get => _username;
-        //    set
-        //    {
-        //        _username = value ?? string.Empty;
-        //        OnPropertyChanged();
 
-        //        // Load Security Question automatically when you change Username
-        //        var question = _userManager.GetSecurityQuestion(_username.Trim());
-        //        SecurityQuestion = question ?? string.Empty;
+        // CommandManager.InvalidateRequerySuggested() : Tell WPF to update the command's state (e.g., CanExecute) when the value of a property changes.
+        //In this file, properties such as Username, SecurityAnswer, NewPassword, and ConfirmPassword determine whether a command (ResetCommand) can be executed (CanReset()).
 
-        //        // Clear some state to prevent lingering values.
-        //        ErrorMessage = string.Empty;
-        //        SecurityAnswer = string.Empty;
-        //        NewPassword = string.Empty;
-        //        ConfirmPassword = string.Empty;
-        //    }
-        //}
 
         public string SecurityQuestion
         {
@@ -84,6 +72,8 @@ namespace CookMaster_Project.ViewModels
         public ICommand ResetCommand { get; }
         public ICommand CancelCommand { get; }
 
+
+        // Constructor
         public ForgetPasswordWindowViewModel(UserManagers userManager)
         {
             _userManager = userManager;

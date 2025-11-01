@@ -25,6 +25,7 @@ namespace CookMaster_Project.Views
         private readonly RegisterWindowViewModel _vm;
 
         // In case of opening a window without sending UserManagers (will be pulled from App.Resources)
+        //If you want RegisterWindow to run in a separate context from the main application, or for testing purposes.
         public RegisterWindow()
         {
             InitializeComponent();
@@ -35,6 +36,7 @@ namespace CookMaster_Project.Views
         }
 
         // In case of opening a window by passing in UserManagers (supports your existing code).
+        //If you want RegisterWindow to run in a separate context from the main application, or for testing purposes
         public RegisterWindow(UserManagers userManager)
         {
             InitializeComponent();

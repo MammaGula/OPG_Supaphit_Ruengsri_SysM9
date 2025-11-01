@@ -1,4 +1,4 @@
-using CookMaster_Project.Managers;
+﻿using CookMaster_Project.Managers;
 using CookMaster_Project.Models;
 using CookMaster_Project.MVVM;
 using CookMaster_Project.Views;
@@ -13,9 +13,15 @@ namespace CookMaster_Project.ViewModel
 {
     public class RecipeListWindowViewModel : BaseViewModel
     {
+        // Readonly: assign in constructor only
+        //UserManagers: To manage data and operations related to users, ex. Login, Add/Remove Recipe, etc.
         private readonly UserManagers? _userManager;
-        private readonly IRecipeService _recipeService = null!; // Add null-forgiving operator
 
+        //To manage recipe Via IRecipeService(ex. RecipeManager)
+        private readonly IRecipeService _recipeService = null!;
+
+
+        // Currently selected recipe
         private Recipe? _selectedRecipe;
         private string _searchQuery = string.Empty;
         private string _selectedFilter = "All";
@@ -29,10 +35,20 @@ namespace CookMaster_Project.ViewModel
         // Favorites filter
         private bool _showOnlyFavorites;
 
+
+        // All loaded recipes 
         public ObservableCollection<Recipe> Recipes { get; } = new();
+
+        // Recipes after filtering
         public ObservableCollection<Recipe> FilteredRecipes { get; } = new();
+
+        // Filter options
         public List<string> Filters { get; } = new() { "All", "Dessert", "Main Course", "Appetizer" };
 
+
+
+        //These properties allow users to filter and sort recipes.
+        // When the values ​​of these properties change, ApplyFilters is called to update FilteredRecipes.
         public Recipe? SelectedRecipe
         {
             get => _selectedRecipe;
@@ -41,7 +57,7 @@ namespace CookMaster_Project.ViewModel
                 _selectedRecipe = value;
                 OnPropertyChanged();
 
-                // Refresh command states when selection changes so Details/Remove (and Favorite) buttons enable/disable correctly
+                // Update the state of the command when the selection changes.
                 CommandManager.InvalidateRequerySuggested();
             }
         }
@@ -71,8 +87,10 @@ namespace CookMaster_Project.ViewModel
             set { _toDate = value; OnPropertyChanged(); ApplyFilters(); }
         }
 
+        // Sorting options
         public List<string> SortOptions { get; } = new() { "CreatedDate", "Title", "Type" };
 
+        // Selected sorting option
         public string SortBy
         {
             get => _sortBy;
@@ -91,6 +109,10 @@ namespace CookMaster_Project.ViewModel
             set { _showOnlyFavorites = value; OnPropertyChanged(); ApplyFilters(); }
         }
 
+
+
+
+
         //Check if the value returned by ?.Username is null.If null, return "Guest". Otherwise,return the value of Username.
         public string LoggedInUsername => _userManager?.GetLoggedInUser()?.Username ?? "Guest";
 
@@ -104,6 +126,8 @@ namespace CookMaster_Project.ViewModel
 
 
 
+
+        //Constructor1
         // In case of injecting external dependencies.
         public RecipeListWindowViewModel(UserManagers userManager, IRecipeService? recipeService = null)
         {
@@ -132,7 +156,7 @@ namespace CookMaster_Project.ViewModel
         }
 
 
-
+        //Constructor2
         // In case of being created from XAML/design: pulling UserManagers from App.Resources.
         public RecipeListWindowViewModel()
         {
@@ -176,8 +200,7 @@ namespace CookMaster_Project.ViewModel
         }
 
 
-
-        // The LoadRecipes method loads recipes from a data source (in this case, UserManagers)
+        // Load recipes from IRecipeService and filter by logged in user.
         // and adds them to the Recipes collection, then calls ApplyFilters to filter the data before displaying it in the UI.
         private void LoadRecipes()
         {
@@ -203,8 +226,7 @@ namespace CookMaster_Project.ViewModel
 
 
 
-        //The ApplyFilters method is used to filter recipes in Recipes by type (SelectedFilter)
-        //and search term (SearchQuery), and then append the filtered results to FilteredRecipes for display in the UI.
+        // Filter and sort recipes by user filters and preferences.
         //Use LINQ(via Where) to filter data in the Recipes collection based on specified conditions:
         //LINQ: Search, Sort, Filter and combine data
         private void ApplyFilters()
@@ -220,6 +242,7 @@ namespace CookMaster_Project.ViewModel
 
             //  Sorting
             IEnumerable<Recipe> orderedRecipes = filteredRecipes;
+
             switch (SortBy)
             {
                 case "Title":
@@ -227,12 +250,14 @@ namespace CookMaster_Project.ViewModel
                         ? filteredRecipes.OrderByDescending(recipe => recipe.Title)
                         : filteredRecipes.OrderBy(recipe => recipe.Title);
                     break;
+
                 case "Type":
                     orderedRecipes = SortDescending
                         ? filteredRecipes.OrderByDescending(recipe => recipe.Type)
                         : filteredRecipes.OrderBy(recipe => recipe.Type);
                     break;
-                default: // "CreatedDate"
+
+                default:
                     orderedRecipes = SortDescending
                         ? filteredRecipes.OrderByDescending(recipe => recipe.CreatedDate)
                         : filteredRecipes.OrderBy(recipe => recipe.CreatedDate);
@@ -247,10 +272,9 @@ namespace CookMaster_Project.ViewModel
 
 
 
-        //Create AddRecipeWindow: User can fill in new recipe information such as the recipe name (Title), description (Description), type (Type), etc.
-        //MainWindow will be the owner of AddRecipeWindow
-        // Show AddRecipeWindow as a dialog 
-        //After closing the AddRecipeWindow window, the LoadRecipes method is called to load a new list of recipes and refresh the UI.
+        // Open the AddRecipeWindow window to allow users to add new recipes.
+        // Set the Owner Window for AddRecipeWindow to maintain the window hierarchy.
+        // Load a new recipe list after closing the AddRecipeWindow window.
         private void OpenAddRecipeWindow()
         {
             try
@@ -262,7 +286,7 @@ namespace CookMaster_Project.ViewModel
 
                 var addRecipeWindow = new AddRecipeWindow();
 
-                // Set Owner only if the owner is still open to avoid throwing exceptions.
+                // Set Owner only if the owner is still open, to avoid throwing exceptions.
                 if (ownerWindow != null && ownerWindow.IsLoaded)
                 {
                     addRecipeWindow.Owner = ownerWindow;
@@ -296,8 +320,9 @@ namespace CookMaster_Project.ViewModel
 
 
 
-        //The OpenRecipeDetailsWindow method opens a new window (RecipeDetailWindow)
-        //It checks that a recipe is selected before running and displays the window in a Modal Dialog format.
+        // Open the RecipeDetailWindow window to display the details of the user-selected recipe.
+        // Set the Owner Window for the RecipeDetailWindow to maintain the window hierarchy.
+        // Reload the recipe list after closing the RecipeDetailWindow window.
         private void OpenRecipeDetailsWindow()
         {
             if (SelectedRecipe == null)
@@ -323,7 +348,6 @@ namespace CookMaster_Project.ViewModel
                 // Show dialog and refresh list after it closes to reflect changes
                 recipeDetailWindow.ShowDialog();
 
-                // Don't close the new RecipeListWindow here, instead refresh the list to avoid duplicate windows.
                 LoadRecipes();
             }
             catch (Exception ex)
@@ -394,6 +418,8 @@ namespace CookMaster_Project.ViewModel
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
+
+
 
         // Toggle favorite marker for selected recipe, then re-apply filters to reflect ShowOnlyFavorites
         private void ToggleFavorite()
