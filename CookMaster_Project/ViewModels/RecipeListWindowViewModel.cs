@@ -2,10 +2,7 @@
 using CookMaster_Project.Models;
 using CookMaster_Project.MVVM;
 using CookMaster_Project.Views;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
@@ -35,20 +32,15 @@ namespace CookMaster_Project.ViewModel
         // Favorites filter
         private bool _showOnlyFavorites;
 
-
-        // All loaded recipes 
+        // All loaded recipes
         public ObservableCollection<Recipe> Recipes { get; } = new();
 
-        // Recipes after filtering
+        //Recipes after filtering
         public ObservableCollection<Recipe> FilteredRecipes { get; } = new();
 
         // Filter options
         public List<string> Filters { get; } = new() { "All", "Dessert", "Main Course", "Appetizer" };
 
-
-
-        //These properties allow users to filter and sort recipes.
-        // When the values ​​of these properties change, ApplyFilters is called to update FilteredRecipes.
         public Recipe? SelectedRecipe
         {
             get => _selectedRecipe;
@@ -56,12 +48,16 @@ namespace CookMaster_Project.ViewModel
             {
                 _selectedRecipe = value;
                 OnPropertyChanged();
-
                 // Update the state of the command when the selection changes.
                 CommandManager.InvalidateRequerySuggested();
             }
         }
 
+
+
+
+        //These properties allow users to filter and sort recipes.
+        // When the values ​​of these properties change, ApplyFilters is called to update FilteredRecipes.
         public string SearchQuery
         {
             get => _searchQuery;
@@ -112,9 +108,10 @@ namespace CookMaster_Project.ViewModel
 
 
 
-
         //Check if the value returned by ?.Username is null.If null, return "Guest". Otherwise,return the value of Username.
         public string LoggedInUsername => _userManager?.GetLoggedInUser()?.Username ?? "Guest";
+
+
 
         public ICommand AddRecipeCommand { get; }
         public ICommand RemoveRecipeCommand { get; }
@@ -123,8 +120,6 @@ namespace CookMaster_Project.ViewModel
         public ICommand SignOutCommand { get; }
         public ICommand ShowInfoCommand { get; }
         public ICommand ToggleFavoriteCommand { get; } // Favorite mark/unmark support (assignment requirement)
-
-
 
 
         //Constructor1
@@ -156,57 +151,16 @@ namespace CookMaster_Project.ViewModel
         }
 
 
-        //Constructor2
-        // In case of being created from XAML/design: pulling UserManagers from App.Resources.
-        public RecipeListWindowViewModel()
-        {
-            if (Application.Current?.Resources["UserManagers"] is UserManagers userManagersFromResources)
-            {
-                _userManager = userManagersFromResources;
-                _recipeService = new RecipeManager(_userManager);
 
-                AddRecipeCommand = new RelayCommand(execute => OpenAddRecipeWindow());
-                RemoveRecipeCommand = new RelayCommand(execute => RemoveRecipe(), canExecute => SelectedRecipe != null);
-                ViewDetailsCommand = new RelayCommand(execute => OpenRecipeDetailsWindow(), canExecute => SelectedRecipe != null);
-                OpenUserDetailsCommand = new RelayCommand(execute => OpenUserDetailsWindow());
-                SignOutCommand = new RelayCommand(execute => SignOut());
-                ShowInfoCommand = new RelayCommand(execute => ShowInfo());
-                ToggleFavoriteCommand = new RelayCommand(execute => ToggleFavorite(), canExecute => SelectedRecipe != null);
-
-                // Update list and displayed username when login state changes
-                _userManager.PropertyChanged += (_, e) =>
-                {
-                    if (e.PropertyName == nameof(UserManagers.LoggedIn))
-                    {
-                        OnPropertyChanged(nameof(LoggedInUsername));
-                        LoadRecipes();
-                    }
-                };
-
-                LoadRecipes();
-            }
-            else
-            {
-                // fallback design-time
-                // In case of being created from XAML/design: pulling UserManagers from App.Resources.
-                AddRecipeCommand = new RelayCommand(execute => { });
-                RemoveRecipeCommand = new RelayCommand(execute => { }, canExecute => false);
-                ViewDetailsCommand = new RelayCommand(execute => { }, canExecute => false);
-                OpenUserDetailsCommand = new RelayCommand(execute => { });
-                SignOutCommand = new RelayCommand(execute => { });
-                ShowInfoCommand = new RelayCommand(execute => { });
-                ToggleFavoriteCommand = new RelayCommand(execute => { }, canExecute => false);
-            }
-        }
-
-
-        // Load recipes from IRecipeService and filter by logged in user.
+        //Load recipes from IRecipeService and filter by logged in user.
         // and adds them to the Recipes collection, then calls ApplyFilters to filter the data before displaying it in the UI.
         private void LoadRecipes()
         {
             Recipes.Clear();
 
             var currentUser = _userManager?.GetLoggedInUser();
+
+            // Get All recipes from IRecipeService (use empty collection in case of no data)
             var recipeSource = _recipeService?.Recipes?.AsEnumerable() ?? Enumerable.Empty<Recipe>();
 
             // Admin sees all; Regular users only see their own.
@@ -333,7 +287,7 @@ namespace CookMaster_Project.ViewModel
 
             try
             {
-                //// Safely select the current window's owner (don't use Application.Current.MainWindow, as it's already closed).
+                // Safely select the current window's owner (don't use Application.Current.MainWindow, as it's already closed).
                 var ownerWindow =
                     Application.Current?.Windows?.OfType<Window>()?.FirstOrDefault(window => ReferenceEquals(window.DataContext, this))
                     ?? Application.Current?.Windows?.OfType<Window>()?.FirstOrDefault(window => window.IsActive);
@@ -347,7 +301,6 @@ namespace CookMaster_Project.ViewModel
 
                 // Show dialog and refresh list after it closes to reflect changes
                 recipeDetailWindow.ShowDialog();
-
                 LoadRecipes();
             }
             catch (Exception ex)

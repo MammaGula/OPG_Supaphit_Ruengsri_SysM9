@@ -1,9 +1,8 @@
 using CookMaster_Project.Managers;
 using CookMaster_Project.MVVM;
 using CookMaster_Project.Views;
-using System.Linq;
 using System.Windows;
-using System.Windows.Input; // For calling CommandManager
+using System.Windows.Input;
 
 namespace CookMaster_Project.ViewModels
 {
@@ -33,7 +32,6 @@ namespace CookMaster_Project.ViewModels
                 CommandManager.InvalidateRequerySuggested();
             }
         }
-
 
         // CommandManager.InvalidateRequerySuggested() : Tell WPF to update the command's state (e.g., CanExecute) when the value of a property changes.
         //In this file, properties such as Username, SecurityAnswer, NewPassword, and ConfirmPassword determine whether a command (ResetCommand) can be executed (CanReset()).

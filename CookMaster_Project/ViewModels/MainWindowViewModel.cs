@@ -1,11 +1,8 @@
 ﻿using CookMaster_Project.Managers;// Import UserManagers
 using CookMaster_Project.MVVM;// Import RelayCommand
 using CookMaster_Project.Views;// Import RegisterWindow
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows;
+using System.Windows; // Import Application, MessageBox, Window
 using System.Windows.Input;
-using System.Linq;
 
 namespace CookMaster_Project.ViewModel
 {
@@ -18,7 +15,7 @@ namespace CookMaster_Project.ViewModel
         private string _error = string.Empty;
 
 
-        // Properties
+        // Properties biding to the View
         public string Username { get => _username; set { _username = value; OnPropertyChanged(); } }
         public string Password { get => _password; set { _password = value; OnPropertyChanged(); } }
         public string Error { get => _error; set { _error = value; OnPropertyChanged(); } }
@@ -30,7 +27,7 @@ namespace CookMaster_Project.ViewModel
         public ICommand OpenRegisterCommand { get; }
 
 
-        // Constructor
+        // Constructor: Dependency Injection of UserManagers
         public MainWindowViewModel(UserManagers userManager)
         {
             _userManager = userManager;
@@ -95,8 +92,7 @@ namespace CookMaster_Project.ViewModel
         //so that new windows that are opened are in the context of the main window.
         private void ForgotPassword()
         {
-
-            CookMaster_Project.Views.ForgetPasswordWindow forgetPasswordWindow = new CookMaster_Project.Views.ForgetPasswordWindow(_userManager)
+            ForgetPasswordWindow forgetPasswordWindow = new ForgetPasswordWindow(_userManager)
             {
                 Owner = Application.Current.MainWindow
             };
@@ -125,8 +121,6 @@ namespace CookMaster_Project.ViewModel
                 .FirstOrDefault(w => w is MainWindow)?
                 .Close();
         }
-
-
 
     }
 }

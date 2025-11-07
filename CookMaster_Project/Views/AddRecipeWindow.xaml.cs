@@ -9,25 +9,18 @@ namespace CookMaster_Project.Views
     /// </summary>
     public partial class AddRecipeWindow : Window
     {
-        // Constructor for Design-time support, no parameters, can create instance
+
+        // Constructor 
         public AddRecipeWindow()
         {
             InitializeComponent();
-
-
             var userManager = (UserManagers)Application.Current.Resources["UserManagers"];
             var recipeService = new RecipeManager(userManager);
+
+            // Dependency injection 
             DataContext = new AddRecipeWindowViewModel(userManager, recipeService);
         }
 
-
-
-        // Constructor for Run-time with dependency injection
-        public AddRecipeWindow(UserManagers userManager, IRecipeService recipeService)
-        {
-            InitializeComponent();
-            DataContext = new AddRecipeWindowViewModel(userManager, recipeService);
-        }
     }
 }
 

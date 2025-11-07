@@ -1,9 +1,5 @@
 using CookMaster_Project.Managers;
-using CookMaster_Project.Models;
 using CookMaster_Project.MVVM;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
@@ -78,7 +74,7 @@ namespace CookMaster_Project.ViewModel
 
 
 
-        // Constructor
+        // Constructor: Dependency injection of UserManagers
         public UserDetailsWindowViewModel(UserManagers userManager)
         {
             //Retrieve the information of the currently logged -in user.
@@ -98,7 +94,7 @@ namespace CookMaster_Project.ViewModel
                 SelectedCountry = user.Country;
 
                 // By default we leave NewUsername empty so user clearly knows it's optional to change.
-                // NewPassword/ConfirmPassword remain empty until user provides.
+                // NewPassword/ConfirmPassword remain empty until user provides as well.
             }
 
 

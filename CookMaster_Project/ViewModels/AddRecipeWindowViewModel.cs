@@ -1,9 +1,6 @@
 using CookMaster_Project.Managers;
 using CookMaster_Project.Models;
 using CookMaster_Project.MVVM;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
@@ -37,6 +34,8 @@ namespace CookMaster_Project.ViewModels
         public ICommand SaveCommand { get; }
         public ICommand CancelCommand { get; }
 
+
+        // Constructor with dependency injection for UserManagers and IRecipeService
         public AddRecipeWindowViewModel(UserManagers userManagers, IRecipeService recipeService)
         {
             _userManagers = userManagers;
@@ -99,7 +98,6 @@ namespace CookMaster_Project.ViewModels
                 MessageBox.Show(ErrorMessage, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-
 
             // Retrieve the logged in user information.
             var user = _userManagers.GetLoggedInUser();

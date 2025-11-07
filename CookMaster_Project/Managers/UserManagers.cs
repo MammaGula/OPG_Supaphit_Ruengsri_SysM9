@@ -1,11 +1,7 @@
 ﻿using CookMaster_Project.Models; // Import the User and AdminUser models
 using CookMaster_Project.MVVM; // Import BaseViewModel
-using System;
-using System.Collections.Generic;
+using CookMaster_Project.Services;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Security.Cryptography; // Import for RandomNumberGenerator
 
 
@@ -30,50 +26,23 @@ namespace CookMaster_Project.Managers
 
 
         // Constructor to initialize with some default users
-        public UserManagers()
+        public UserManagers() : this(new DefaultUserSeed())
+        {
+        }
+
+        public UserManagers(IUserSeed seed)
         {
             // Add default admin and user accounts
-            _users.Add(new AdminUser
+            foreach (var u in seed.GetInitialUsers())
             {
-                Username = "admin",
-                Password = "password",
-                Country = "Thailand",
-                SecurityQuestion = "What is the Admin PIN?",
-                SecurityAnswer = "1234"
-            });
-
-            _users.Add(new User
-            {
-                Username = "user",
-                Password = "password",
-                Country = "Sweden",
-                SecurityQuestion = "What is your lucky number",
-                SecurityAnswer = "5678",
-                IsAdmin = false
-            });
+                _users.Add(u);
+            }
 
             // Initialize with some default recipes
-            Recipes.Add(new Recipe
+            foreach (var r in seed.GetInitialRecipes())
             {
-                Title = "Pancake",
-                Description = "Sweet pancake",
-                Ingredients = "Flour, Egg, Milk",
-                Instructions = "Mix & fry",
-                Type = "Dessert",
-                TimeMinutes = 20,
-                CreatedBy = "admin"
-            });
-
-            Recipes.Add(new Recipe
-            {
-                Title = "Fried rice",
-                Description = "Easy and healthy meal",
-                Ingredients = "Rice, Garlic, Sugar, Eggs, Soy sauce, vegetables, meat",
-                Instructions = "Chop & Fry",
-                Type = "Main Course",
-                TimeMinutes = 10,
-                CreatedBy = "user"
-            });
+                Recipes.Add(r);
+            }
         }
 
 
@@ -217,8 +186,6 @@ namespace CookMaster_Project.Managers
                 }
                 return;
             }
-
-
 
             // Regular users can only remove their own recipes
             if (LoggedIn != null &&

@@ -1,18 +1,7 @@
 ﻿using CookMaster_Project.Managers;
 using CookMaster_Project.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace CookMaster_Project.Views
 {
@@ -24,19 +13,21 @@ namespace CookMaster_Project.Views
 
         private readonly RegisterWindowViewModel _vm;
 
-        // In case of opening a window without sending UserManagers (will be pulled from App.Resources)
+
+        //// In case of opening a window without sending UserManagers (will be pulled from App.Resources)
+        //// want to share a shared status, such as a list of users (_users), LoggedIn user in UserManagers.
+        //public RegisterWindow()
+        //{
+        //    InitializeComponent();
+        //    var userManager = (UserManagers)Application.Current.Resources["UserManagers"];
+        //    _vm = new RegisterWindowViewModel(userManager);
+        //    DataContext = _vm;
+
+        //}
+
+
+        // In case of opening a window by passing in UserManagers 
         //If you want RegisterWindow to run in a separate context from the main application, or for testing purposes.
-        public RegisterWindow()
-        {
-            InitializeComponent();
-            var userManager = (UserManagers)Application.Current.Resources["UserManagers"];
-            _vm = new RegisterWindowViewModel(userManager);
-            DataContext = _vm;
-
-        }
-
-        // In case of opening a window by passing in UserManagers (supports your existing code).
-        //If you want RegisterWindow to run in a separate context from the main application, or for testing purposes
         public RegisterWindow(UserManagers userManager)
         {
             InitializeComponent();
@@ -45,25 +36,27 @@ namespace CookMaster_Project.Views
         }
 
 
-        // Pattern matching: Check both sender and DataContext first,
-        // if sender is not PasswordBox the condition is not met and no exception is thrown.
-        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            if (sender is PasswordBox pb && DataContext is RegisterWindowViewModel vm)
-            {
-                vm.Password = pb.Password;
-            }
-        }
-
-        ////update the password in the PasswordBox (View)to the Password prop. in ViewModel
+        //// Pattern matching: Check both sender and DataContext first,
+        //// if sender is not PasswordBox the condition is not met and no exception is thrown.
         //private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         //{
-
-        //    if (DataContext is RegisterWindowViewModel viewModel)
+        //    if (sender is PasswordBox pb && DataContext is RegisterWindowViewModel vm)
         //    {
-        //        viewModel.Password = ((PasswordBox)sender).Password;
+        //        vm.Password = pb.Password;
         //    }
         //}
+
+
+
+        //update the password in the PasswordBox (View)to the Password prop. in ViewModel
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+
+            if (DataContext is RegisterWindowViewModel viewModel)
+            {
+                viewModel.Password = ((PasswordBox)sender).Password;
+            }
+        }
 
 
 

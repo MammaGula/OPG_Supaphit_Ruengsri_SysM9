@@ -1,9 +1,6 @@
 using CookMaster_Project.Managers;
 using CookMaster_Project.Models;
 using CookMaster_Project.MVVM;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
@@ -91,7 +88,7 @@ namespace CookMaster_Project.ViewModels
         }
 
 
-        //  Validate and save changes to the original recipe object
+        // Validate and save changes to the original recipe object
         private void Save()
         {
             ErrorMessage = string.Empty;
@@ -130,7 +127,7 @@ namespace CookMaster_Project.ViewModels
         }
 
 
-        // Create a new recipe by copying the current one
+        // Create a copy of the current recipe as a new recipe
         private void CopyAsNew()
         {
             //Retrieves the currently logged in user, if no user is logged in, set createdBy to "Guest".
@@ -144,7 +141,7 @@ namespace CookMaster_Project.ViewModels
             }
 
 
-            // Create a new Recipe object as a clone of the original with modifications
+            // create a new Recipe object as a clone of the original with modifications
             var clone = new Recipe
             {
                 Title = string.IsNullOrWhiteSpace(Title) ? $"{_original.Title} - Copy" : $"{Title.Trim()} - Copy",

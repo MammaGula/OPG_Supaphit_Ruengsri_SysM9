@@ -1,6 +1,5 @@
 ﻿using CookMaster_Project.Managers;
 using CookMaster_Project.ViewModels;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -8,6 +7,8 @@ namespace CookMaster_Project.Views
 {
     public partial class ForgetPasswordWindow : Window
     {
+
+        // Constructor for Run-time only with dependency injection
         public ForgetPasswordWindow(UserManagers userManagers)
         {
             InitializeComponent();

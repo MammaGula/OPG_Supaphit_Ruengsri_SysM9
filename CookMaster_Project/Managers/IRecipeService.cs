@@ -1,5 +1,5 @@
-using System.Collections.ObjectModel;
 using CookMaster_Project.Models;
+using System.Collections.ObjectModel;
 
 namespace CookMaster_Project.Managers
 {
@@ -14,4 +14,4 @@ namespace CookMaster_Project.Managers
 
 //IRecipeService for easy decoupling and testing.
 // The Recipe has clear service usage from multiple ViewModels, Flexible implementation changes in the future.
-// (AddRecipeWindowViewModel, RecipeDetailWindowViewModel, RecipeListWindowViewModel)
+// (AddRecipeWindowViewModel, RecipeDetailWindowViewModel, RecipeListWindowVishouewModel)

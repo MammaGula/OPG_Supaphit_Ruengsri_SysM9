@@ -1,5 +1,5 @@
-﻿using System.Collections.ObjectModel;
-using CookMaster_Project.Models;
+﻿using CookMaster_Project.Models;
+using System.Collections.ObjectModel;
 
 namespace CookMaster_Project.Managers
 {
@@ -13,6 +13,8 @@ namespace CookMaster_Project.Managers
         // public RecipeManager(UserManagers userManagers) is an overload that takes UserManagers.
         // : this(userManagers.Recipes) is passed to another constructor that takes ObservableCollection<Recipe>,
         // causing the RecipeManager to use the same Recipes collection as the UserManagers.
+
+
         // Result: Adding / removing recipes to the RecipeManager is immediately reflected in the UserManagers
         // (single source of truth), and the UI bound to that collection is automatically updated in WPF.
 
@@ -36,5 +38,6 @@ namespace CookMaster_Project.Managers
         }
     }
 }
+
 
 

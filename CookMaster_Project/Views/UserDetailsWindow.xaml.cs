@@ -10,6 +10,7 @@ namespace CookMaster_Project.Views
     /// </summary>
     public partial class UserDetailsWindow : Window
     {
+        // Constructor with dependency injection
         public UserDetailsWindow(UserManagers userManager)
         {
             InitializeComponent();

@@ -1,8 +1,6 @@
 ﻿using CookMaster_Project.Managers;
 using CookMaster_Project.MVVM;
 using CookMaster_Project.Views;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
@@ -158,7 +156,7 @@ namespace CookMaster_Project.ViewModels
                 Application.Current.MainWindow = newMain;
                 newMain.Show();
 
-                // Searches for any open RegisterWindow windows in the application,
+                // // Searches for any open RegisterWindow windows in the application,
                 // and if it finds one, it closes it by calling the Close() method.
                 var registerWindow = Application.Current.Windows.OfType<RegisterWindow>().FirstOrDefault();
                 registerWindow?.Close();
