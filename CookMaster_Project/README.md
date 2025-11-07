@@ -55,27 +55,27 @@ Systemet initieras med <code>DefaultUserSeed</code>. Kommandon implementeras via
 ● Utveckla enhetstester (Unit Tests) för autentisering, 2FA, recept och validering.<br>
 <br>
 <h2> ➢ Fördelar och nackdelar med olika tekniska approacher </h2><br>
-<h3> Tjänsteupplösning</h3><br>
+<h3> Tjänsteupplösning</h3>
 ● Application.Resources (Service Locator) – Enkel setup men svår testat och svag livscykel kontroll.<br>
 ● DI-container (Microsoft.Extensions.DependencyInjection) – Mer testbarhet och flexibilitet, men kräver mer konfiguration.<br>
 <br>
-<h3> Lösenordshantering </h3><br>
+<h3> Lösenordshantering </h3>
 ● PasswordChanged-event + string – Enkelt men mindre säkert.<br>
 ● Attached Property + SecureString – Säkrare och mer MVVM-korrekt men kräver mer kod.<br>
 <br>
-<h3> Dialoger </h3><br>
+<h3> Dialoger </h3>
 ● MessageBox i ViewModel – Snabb lösning men hårt kopplad till UI.<br>
 ● IDialogService-abstraktion – Testbar och modulär men kräver extra implementation.<br>
 <br>
-<h3> Navigering </h3><br>
+<h3> Navigering </h3>
 ● Flera fönster – Enkel modell men fragmenterad hantering.<br>
 ● Shell + NavigationService – Centraliserad och flexibel men mer komplex.<br>
 <br>
-<h3> Validering </h3><br>
+<h3> Validering </h3>
 ● ErrorMessage i ViewModel – Enkel men ger ingen fältvis feedback.<br>
 ● INotifyDataErrorInfo / ValidationRules – Ger bättre UX men kräver mer struktur.<br>
 <br>
-<h2> ➢ Samlad bedömning </h2><br>
+<h2> ➢ Samlad bedömning </h2>
 Projektet visar en god förståelse för MVVM-arkitektur och är väl lämpat som en lärande prototyp. För att nå produktionsnivå bör fokus ligga på att tydligare separera UI-logik, införa DI, förbättra lösenordshantering och validering samt implementera datalagring. En stegvis refaktorering enligt denna plan kommer att göra systemet mer modulärt, säkrare och lättare att testa.<br>
 
 
