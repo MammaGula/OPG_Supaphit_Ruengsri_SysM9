@@ -1,5 +1,6 @@
 using CookMaster_Project.Managers;
 using CookMaster_Project.MVVM;
+using CookMaster_Project.Services;
 using System.Windows;
 using System.Windows.Input;
 
@@ -8,6 +9,7 @@ namespace CookMaster_Project.ViewModel
     public class UserDetailsWindowViewModel : BaseViewModel
     {
         private readonly UserManagers _userManager;
+        private readonly IWindowService _windowService;
 
 
         private string _username = string.Empty;
@@ -75,11 +77,12 @@ namespace CookMaster_Project.ViewModel
 
 
         // Constructor: Dependency injection of UserManagers
-        public UserDetailsWindowViewModel(UserManagers userManager)
+        public UserDetailsWindowViewModel(UserManagers userManager, IWindowService? windowService = null)
         {
             //Retrieve the information of the currently logged -in user.
             //Set the Username and Country values ??of the ViewModel to match the currently logged -in user.
             _userManager = userManager;
+            _windowService = windowService ?? new WindowService();
 
             var user = _userManager.GetLoggedInUser();
             if (user != null)
@@ -232,21 +235,14 @@ namespace CookMaster_Project.ViewModel
         // Cancel changes and close the window
         private void Cancel()
         {
-            CloseWindow();
+            CloseWindow(); // Simply close without saving
         }
 
 
-
-        //Close the window associated with the current ViewModel.
-        //It searches for a window in Application.Current.Windows
-        //and checks if its DataContext matches the ViewModel.
-        //If a matching window is found, it calls Close() to close that window.
+        // Close the associated window
         private void CloseWindow()
         {
-            Application.Current.Windows
-                ?.OfType<Window>()
-                ?.FirstOrDefault(w => w.DataContext == this)
-                ?.Close();
+            _windowService.CloseWindowFor(this);
         }
     }
 }

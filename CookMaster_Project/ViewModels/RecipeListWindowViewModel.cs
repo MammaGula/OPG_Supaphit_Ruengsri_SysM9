@@ -1,6 +1,7 @@
 ﻿using CookMaster_Project.Managers;
 using CookMaster_Project.Models;
 using CookMaster_Project.MVVM;
+using CookMaster_Project.Services;
 using CookMaster_Project.Views;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -16,6 +17,9 @@ namespace CookMaster_Project.ViewModel
 
         //To manage recipe Via IRecipeService(ex. RecipeManager)
         private readonly IRecipeService _recipeService = null!;
+
+        //To manage window operations Via IWindowService(ex. WindowService)
+        private readonly IWindowService _windowService = null!;
 
 
         // Currently selected recipe
@@ -122,12 +126,13 @@ namespace CookMaster_Project.ViewModel
         public ICommand ToggleFavoriteCommand { get; } // Favorite mark/unmark support (assignment requirement)
 
 
-        //Constructor1
+        //Constructor
         // In case of injecting external dependencies.
-        public RecipeListWindowViewModel(UserManagers userManager, IRecipeService? recipeService = null)
+        public RecipeListWindowViewModel(UserManagers userManager, IRecipeService? recipeService = null, IWindowService? windowService = null)
         {
             _userManager = userManager;
             _recipeService = recipeService ?? new RecipeManager(_userManager);
+            _windowService = windowService ?? new WindowService();
 
             AddRecipeCommand = new RelayCommand(execute => OpenAddRecipeWindow());
             RemoveRecipeCommand = new RelayCommand(execute => RemoveRecipe()/*, canExecute => SelectedRecipe != null*/);
@@ -233,20 +238,13 @@ namespace CookMaster_Project.ViewModel
         {
             try
             {
-                // Find the correct owner: the window holding this DataContext == ViewModel , or if none is found, use the Active window.
-                var ownerWindow =
-                    Application.Current?.Windows?.OfType<Window>()?.FirstOrDefault(window => ReferenceEquals(window.DataContext, this))
-                    ?? Application.Current?.Windows?.OfType<Window>()?.FirstOrDefault(window => window.IsActive);
 
                 var addRecipeWindow = new AddRecipeWindow();
 
-                // Set Owner only if the owner is still open, to avoid throwing exceptions.
-                if (ownerWindow != null && ownerWindow.IsLoaded)
-                {
-                    addRecipeWindow.Owner = ownerWindow;
-                }
 
-                addRecipeWindow.ShowDialog();
+                // Uses the window service to show the window as a modal dialog and set ownership safely.
+                _windowService.ShowDialog(addRecipeWindow, this);
+
                 LoadRecipes();
             }
             catch (Exception exception)
@@ -288,19 +286,11 @@ namespace CookMaster_Project.ViewModel
             try
             {
                 // Safely select the current window's owner (don't use Application.Current.MainWindow, as it's already closed).
-                var ownerWindow =
-                    Application.Current?.Windows?.OfType<Window>()?.FirstOrDefault(window => ReferenceEquals(window.DataContext, this))
-                    ?? Application.Current?.Windows?.OfType<Window>()?.FirstOrDefault(window => window.IsActive);
-
                 var recipeDetailWindow = new RecipeDetailWindow(SelectedRecipe, _recipeService);
 
-                if (ownerWindow != null && ownerWindow.IsLoaded)
-                {
-                    recipeDetailWindow.Owner = ownerWindow;
-                }
+                _windowService.ShowDialog(recipeDetailWindow, this); // Set owner and show dialog
 
                 // Show dialog and refresh list after it closes to reflect changes
-                recipeDetailWindow.ShowDialog();
                 LoadRecipes();
             }
             catch (Exception ex)
@@ -322,19 +312,11 @@ namespace CookMaster_Project.ViewModel
 
             try
             {
-                // Choose owner safety
-                var ownerWindow =
-                    Application.Current?.Windows?.OfType<Window>()?.FirstOrDefault(window => ReferenceEquals(window.DataContext, this))
-                    ?? Application.Current?.Windows?.OfType<Window>()?.FirstOrDefault(window => window.IsActive);
-
+                //
                 var userDetailsWindow = new UserDetailsWindow(_userManager);
 
-                if (ownerWindow != null && ownerWindow.IsLoaded)
-                {
-                    userDetailsWindow.Owner = ownerWindow;
-                }
-
-                userDetailsWindow.ShowDialog();
+                // Show as modal and set a safe owner via IWindowService
+                _windowService.ShowDialog(userDetailsWindow, this);
             }
             catch (Exception ex)
             {
@@ -344,7 +326,7 @@ namespace CookMaster_Project.ViewModel
 
 
 
-        //The SignOut method logs out the current user using the UserManagers instance
+        //The SignOut method logs out the current user 
         private void SignOut()
         {
             _userManager?.Logout();
@@ -354,10 +336,7 @@ namespace CookMaster_Project.ViewModel
             mainWindow.Show();
 
             //Close the window where DataContext == this (supports if MainWindow is not the current page)
-            Application.Current?.Windows
-                ?.OfType<Window>()
-                ?.FirstOrDefault(window => window.DataContext == this)
-                ?.Close();
+            _windowService.CloseWindowFor(this);
         }
 
 

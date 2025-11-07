@@ -1,6 +1,6 @@
 ﻿using CookMaster_Project.Managers;
 using CookMaster_Project.MVVM;
-using CookMaster_Project.Views;
+using CookMaster_Project.Services;
 using System.Windows;
 using System.Windows.Input;
 
@@ -10,6 +10,7 @@ namespace CookMaster_Project.ViewModels
     {
         // Fields
         private readonly UserManagers _userManager;
+        private readonly IWindowService _windowService;
         private string _username = string.Empty;
         private string _password = string.Empty;
         private string _confirmPassword = string.Empty;
@@ -105,9 +106,10 @@ namespace CookMaster_Project.ViewModels
 
 
         // Constructor
-        public RegisterWindowViewModel(UserManagers userManager)
+        public RegisterWindowViewModel(UserManagers userManager, IWindowService? windowService = null)
         {
             _userManager = userManager;
+            _windowService = windowService ?? new WindowService(); // Use provided or default WindowService
 
             RegisterCommand = new RelayCommand(
                 execute => Register(),
@@ -156,12 +158,7 @@ namespace CookMaster_Project.ViewModels
                 Application.Current.MainWindow = newMain;
                 newMain.Show();
 
-                // // Searches for any open RegisterWindow windows in the application,
-                // and if it finds one, it closes it by calling the Close() method.
-                var registerWindow = Application.Current.Windows.OfType<RegisterWindow>().FirstOrDefault();
-                registerWindow?.Close();
-
-
+                _windowService.CloseWindowFor(this);
             }
             else
             {
@@ -177,12 +174,8 @@ namespace CookMaster_Project.ViewModels
             Application.Current.MainWindow = main;
             main.Show();
 
-            // Find RegisterWindow close the RegisterWindow
-            var registerWindow = Application.Current.Windows
-                .OfType<RegisterWindow>()
-                .FirstOrDefault();
-
-            registerWindow?.Close();
+            // Close the window whose DataContext is this ViewModel via IWindowService
+            _windowService.CloseWindowFor(this);
         }
     }
 }

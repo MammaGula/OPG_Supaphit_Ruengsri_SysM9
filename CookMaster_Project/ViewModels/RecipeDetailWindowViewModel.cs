@@ -1,6 +1,7 @@
 using CookMaster_Project.Managers;
 using CookMaster_Project.Models;
 using CookMaster_Project.MVVM;
+using CookMaster_Project.Services;
 using System.Windows;
 using System.Windows.Input;
 
@@ -11,6 +12,7 @@ namespace CookMaster_Project.ViewModels
         private readonly UserManagers _userManagers;
         private readonly IRecipeService _recipeService;
         private readonly Recipe _original; // Keep reference to the original recipe object
+        private readonly IWindowService _windowService;
 
         private string _title = string.Empty;
         private string _description = string.Empty;
@@ -54,12 +56,13 @@ namespace CookMaster_Project.ViewModels
         public ICommand CopyAsNewCommand { get; }
 
 
-        // Constructor
-        public RecipeDetailWindowViewModel(UserManagers userManagers, IRecipeService recipeService, Recipe selected)
+        // Constructor (optional IWindowService injection)
+        public RecipeDetailWindowViewModel(UserManagers userManagers, IRecipeService recipeService, Recipe selected, IWindowService? windowService = null)
         {
             _userManagers = userManagers;
             _recipeService = recipeService;
             _original = selected;
+            _windowService = windowService ?? new WindowService();
 
             // Initialize fields from the original recipe
             Title = selected.Title;
@@ -86,7 +89,6 @@ namespace CookMaster_Project.ViewModels
             }
             IsEditing = true;
         }
-
 
         // Validate and save changes to the original recipe object
         private void Save()
@@ -140,7 +142,6 @@ namespace CookMaster_Project.ViewModels
                 return;
             }
 
-
             // create a new Recipe object as a clone of the original with modifications
             var clone = new Recipe
             {
@@ -161,13 +162,10 @@ namespace CookMaster_Project.ViewModels
         }
 
 
-
         private void CloseWindow()
         {
-            Application.Current.Windows
-                ?.OfType<Window>()
-                ?.FirstOrDefault(w => ReferenceEquals(w.DataContext, this))
-                ?.Close();
+            // Use WindowService instead of direct Application.Current enumeration
+            _windowService.CloseWindowFor(this);
         }
     }
 }

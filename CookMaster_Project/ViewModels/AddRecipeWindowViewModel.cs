@@ -1,6 +1,7 @@
 using CookMaster_Project.Managers;
 using CookMaster_Project.Models;
 using CookMaster_Project.MVVM;
+using CookMaster_Project.Services;
 using System.Windows;
 using System.Windows.Input;
 
@@ -10,6 +11,7 @@ namespace CookMaster_Project.ViewModels
     {
         private readonly UserManagers _userManagers;
         private readonly IRecipeService _recipeService;
+        private readonly IWindowService _windowService;
 
         private string _title = string.Empty;
         private string _description = string.Empty;
@@ -34,12 +36,12 @@ namespace CookMaster_Project.ViewModels
         public ICommand SaveCommand { get; }
         public ICommand CancelCommand { get; }
 
-
-        // Constructor with dependency injection for UserManagers and IRecipeService
-        public AddRecipeWindowViewModel(UserManagers userManagers, IRecipeService recipeService)
+        // Constructor with dependency injection for UserManagers and IRecipeService (and optional IWindowService)
+        public AddRecipeWindowViewModel(UserManagers userManagers, IRecipeService recipeService, IWindowService? windowService = null)
         {
             _userManagers = userManagers;
             _recipeService = recipeService;
+            _windowService = windowService ?? new WindowService();
 
             SaveCommand = new RelayCommand(execute => Save());
             CancelCommand = new RelayCommand(execute => CloseWindow());
@@ -124,10 +126,8 @@ namespace CookMaster_Project.ViewModels
 
         private void CloseWindow()
         {
-            Application.Current.Windows
-                ?.OfType<Window>()
-                ?.FirstOrDefault(w => w.DataContext == this)
-                ?.Close();
+            // Use IWindowService instead of directly querying Application.Current.Windows
+            _windowService.CloseWindowFor(this);
         }
     }
 }

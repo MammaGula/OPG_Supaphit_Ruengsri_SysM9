@@ -1,5 +1,6 @@
 ﻿using CookMaster_Project.Managers;// Import UserManagers
 using CookMaster_Project.MVVM;// Import RelayCommand
+using CookMaster_Project.Services; // Import WindowService / IWindowService
 using CookMaster_Project.Views;// Import RegisterWindow
 using System.Windows; // Import Application, MessageBox, Window
 using System.Windows.Input;
@@ -10,6 +11,7 @@ namespace CookMaster_Project.ViewModel
     {
         // Fields
         private readonly UserManagers _userManager;
+        private readonly IWindowService _windowService;
         private string _username = string.Empty;
         private string _password = string.Empty;
         private string _error = string.Empty;
@@ -27,10 +29,12 @@ namespace CookMaster_Project.ViewModel
         public ICommand OpenRegisterCommand { get; }
 
 
-        // Constructor: Dependency Injection of UserManagers
-        public MainWindowViewModel(UserManagers userManager)
+        // Constructor: Dependency Injection of UserManagers (+ optional window service)
+        public MainWindowViewModel(UserManagers userManager, IWindowService? windowService = null)
         {
             _userManager = userManager;
+            _windowService = windowService ?? new WindowService();
+
             LoginCommand = new RelayCommand(execute => Login(), canExecute => CanLogin());
             OpenRegisterCommand = new RelayCommand(execute => OpenRegisterWindow());
             ForgotPasswordCommand = new RelayCommand(execute => ForgotPassword());
@@ -42,6 +46,7 @@ namespace CookMaster_Project.ViewModel
 
 
 
+        // Perform login and handle two-factor authentication
         private void Login()
         {
             if (!_userManager.Login(Username, Password, out string msg))
@@ -54,11 +59,12 @@ namespace CookMaster_Project.ViewModel
             var code = _userManager.GenerateTwoFactorCode(Username);
             MessageBox.Show($"Simulation: Your verification code is {code}.", "Two-Factor Code", MessageBoxButton.OK, MessageBoxImage.Information);
 
-            // Show 2FA dialog
-            var twoFactorWindow = new TwoFactorWindow(_userManager, Username)
-            {
-                Owner = Application.Current.MainWindow
-            };
+            // Show 2FA dialog (use window service to resolve owner safely)
+            var twoFactorWindow = new TwoFactorWindow(_userManager, Username);
+            var owner = _windowService.GetOwner(this);
+            if (owner != null)
+                twoFactorWindow.Owner = owner;
+
             var result = twoFactorWindow.ShowDialog();
             if (result != true)
             {
@@ -69,33 +75,28 @@ namespace CookMaster_Project.ViewModel
             MessageBox.Show(msg, "Login completed", MessageBoxButton.OK);
 
             // Create and show the RecipeListWindow
-            RecipeListWindow recipeListWindow = new RecipeListWindow();
+            var recipeListWindow = new RecipeListWindow();
 
             // Set it to a new MainWindow to reduce the problem of owner pointing to a closed window.
             Application.Current.MainWindow = recipeListWindow;
 
             recipeListWindow.Show();
 
-            // Close old MainWindow 
-            var oldMain = Application.Current.Windows
-                .OfType<Window>()
-                .FirstOrDefault(w => w is MainWindow);
-            oldMain?.Close();
+            // Close old MainWindow via window service (DataContext == this)
+            _windowService.CloseWindowFor(this);
         }
 
 
 
-
-        // Open the ForgotPassword Window as dialog
-        //Create instance of ForgetPasswordWindow by passing _userManager to constructor
-        //Make the ForgetPasswordWindow window the main window by using Application.Current.MainWindow
-        //so that new windows that are opened are in the context of the main window.
+        // Open the Forgot Password Window
         private void ForgotPassword()
         {
-            ForgetPasswordWindow forgetPasswordWindow = new ForgetPasswordWindow(_userManager)
-            {
-                Owner = Application.Current.MainWindow
-            };
+            var forgetPasswordWindow = new ForgetPasswordWindow(_userManager);
+
+            // Resolve owner through WindowService instead of direct MainWindow usage
+            var owner = _windowService.GetOwner(this);
+            if (owner != null)
+                forgetPasswordWindow.Owner = owner;
 
             forgetPasswordWindow.ShowDialog();
         }
@@ -115,13 +116,9 @@ namespace CookMaster_Project.ViewModel
 
             registerWindow.Show();
 
-            // Close the current MainWindow
-            Application.Current.Windows
-                .OfType<Window>()
-                .FirstOrDefault(w => w is MainWindow)?
-                .Close();
+            // Close the current MainWindow using window service (DataContext == this)
+            _windowService.CloseWindowFor(this);
         }
 
     }
 }
-
