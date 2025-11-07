@@ -1,4 +1,4 @@
-﻿<h1 style="color: purple;">CookMaster Project 🍳</h1>
+<h1 style="color: purple;">CookMaster Project 🍳</h1>
 CookMaster is a WPF recipe management application. Features include:<br>
 - 📝 Add, edit, and delete recipes<br>
 - 🔒 Supports login and user management<br>
