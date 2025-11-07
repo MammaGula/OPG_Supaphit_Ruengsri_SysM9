@@ -51,7 +51,7 @@ Systemet initieras med <code>DefaultUserSeed</code>. Kommandon implementeras via
 ● Dela upp UserManager, som idag har för många uppgifter (inloggning, profil, återställning).<br>
 ● Förenkla ViewModels genom att införa Interfaces, Services och ett tydligare Infrastructure-lager.<br>
 ● Skapa en Navigation Service för mer strukturerad navigering.<br>
-● Införa ett riktigt datalager med beständighet<br>
+● Införa ett riktigt datalager med beständighet.<br>
 ● Utveckla enhetstester (Unit Tests) för autentisering, 2FA, recept och validering.<br>
 <br>
 ➢ Fördelar och nackdelar med olika tekniska approacher<br>
@@ -105,4 +105,4 @@ Data is initialized via <code>DefaultUserSeed</code>. Commands follow the Comman
 - Write unit tests (auth, 2FA, recipes, validation).<br>
 
 <h3>Overall Outlook</h3>
-Suitable for learning and prototyping; solid MVVM foundation. Next steps: further UI decoupling, improve data security, field-level validation, and modular services. Following the plan will evolve it into a stable, secure, production-ready system.<br>
+Suitable for learning and prototyping; solid MVVM foundation. Next steps: further UI decoupling, improve data security, field-level validation, and modular services. Following the plan will evolve it into a stable, secure, production-ready system that is easy to maintain and test.<br>
